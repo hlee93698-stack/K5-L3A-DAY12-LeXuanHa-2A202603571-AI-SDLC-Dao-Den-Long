@@ -83,7 +83,7 @@ export function parseScenario(raw: unknown, night = 1): Scenario {
     if (!isObj(p)) fail('scenario.player: expected object');
     s.player = {};
     if (p.pos !== undefined) s.player.pos = vec3(p.pos, 'scenario.player.pos');
-    for (const k of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks'] as const) {
+    for (const k of ['carried', 'flames', 'invuln_ticks', 'dash_cd_ticks', 'pulse_cd_ticks', 'charm_ticks', 'successful_lights'] as const) {
       const v = optInt(p, k, 'scenario.player');
       if (v !== undefined) s.player[k] = v;
     }
@@ -112,8 +112,9 @@ export function parseScenario(raw: unknown, night = 1): Scenario {
       return {
         id: optId(m.id, `${w}.id`),
         pos: vec3(m.pos, `${w}.pos`),
-        state: oneOf(m.state, ['spawning', 'wander', 'chase', 'recoil', 'stunned'] as const, `${w}.state`),
+        state: oneOf(m.state, ['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain'] as const, `${w}.state`),
         state_ticks_left: optInt(m, 'state_ticks_left', w),
+        target_lantern_id: m.target_lantern_id === undefined ? undefined : oneOf(m.target_lantern_id, lanternIds, `${w}.target_lantern_id`),
       };
     });
     uniqueIds(s.shades, 'scenario.shades');
@@ -154,6 +155,11 @@ export function parseScenario(raw: unknown, night = 1): Scenario {
       if (l.pos !== undefined) out.pos = vec3(l.pos, `${w}.pos`);
       if (l.deposited !== undefined) out.deposited = nonNegInt(l.deposited, `${w}.deposited`);
       if (l.lit !== undefined) out.lit = bool(l.lit, `${w}.lit`);
+      if (l.ever_lit !== undefined) out.ever_lit = bool(l.ever_lit, `${w}.ever_lit`);
+      if (l.fuel !== undefined) {
+        if (!isNum(l.fuel) || l.fuel < 0 || l.fuel > 100) fail(`${w}.fuel: expected a number in [0, 100]`);
+        out.fuel = l.fuel;
+      }
       return out;
     });
   }
