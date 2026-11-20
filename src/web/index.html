@@ -13,6 +13,7 @@
   #flames { top: 14px; left: 16px; font-size: 26px; letter-spacing: 4px; color: var(--amber); }
   #flames .off { color: #5B5F6E; }
   #clock { top: 10px; left: 50%; transform: translateX(-50%); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  #clock.dangerCb { color: #FFFFFF; animation: blink 1s steps(2) infinite; }
   #clock.danger { color: var(--danger); animation: blink 1s steps(2) infinite; }
   @keyframes blink { 50% { opacity: .35; } }
   #topright { top: 12px; right: 16px; text-align: right; font-size: 18px; line-height: 1.5; }
@@ -53,7 +54,7 @@
 <div class="hud" id="flames"></div>
 <div class="hud" id="charm">Bùa Gió <span id="charmS"></span></div>
 <div class="hud" id="clock">5:00</div>
-<div class="hud" id="topright">Đèn <b id="lamps">0/5</b><br>Điểm <b id="score">0</b></div>
+<div class="hud" id="topright">Đèn <b id="lamps">0/5</b><br>Điểm <b id="score">0</b><br>Mang <b id="cap">0/10</b></div>
 <div class="hud" id="motebar"></div>
 <div class="hud" id="cds">
   <div class="cd" id="cdDash"><span class="ico">💨</span><div class="fill"></div>Lướt</div>

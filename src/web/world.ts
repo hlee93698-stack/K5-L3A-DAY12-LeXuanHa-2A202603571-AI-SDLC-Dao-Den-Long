@@ -161,6 +161,10 @@ export interface LanternView {
   lampMat: THREE.MeshStandardMaterial;
   light: THREE.PointLight;
   ring: THREE.Mesh;
+  lamp: THREE.Mesh;
+  fuelBar: THREE.Sprite;
+  fuelBg: THREE.Sprite;
+  tear: THREE.Mesh;
 }
 export function makeLantern(): LanternView {
   const g = new THREE.Group();
@@ -179,8 +183,19 @@ export function makeLantern(): LanternView {
   );
   ring.rotation.x = -Math.PI / 2;
   ring.position.y = 0.04;
-  g.add(post, lamp, roof, light, ring);
-  return { g, lampMat, light, ring };
+  // fuel bar (Ticket-03) + torn paper mark for unlit lanterns (readable without color)
+  const fuelBg = new THREE.Sprite(new THREE.SpriteMaterial({ color: 0x000000, depthTest: false }));
+  fuelBg.scale.set(1.7, 0.26, 1);
+  fuelBg.position.y = 4.9;
+  fuelBg.renderOrder = 10;
+  const fuelBar = new THREE.Sprite(new THREE.SpriteMaterial({ color: PAL.lampOn, depthTest: false }));
+  fuelBar.position.set(0, 4.9, 0);
+  fuelBar.renderOrder = 11;
+  const tear = new THREE.Mesh(new THREE.PlaneGeometry(0.12, 0.7), new THREE.MeshBasicMaterial({ color: 0x0e1430, side: THREE.DoubleSide }));
+  tear.position.set(0.1, 3.4, 0.5);
+  tear.rotation.z = 0.4;
+  g.add(post, lamp, roof, light, ring, fuelBg, fuelBar, tear);
+  return { g, lampMat, light, ring, lamp, fuelBar, fuelBg, tear };
 }
 
 const moteCoreGeo = new THREE.SphereGeometry(0.12, 8, 6);

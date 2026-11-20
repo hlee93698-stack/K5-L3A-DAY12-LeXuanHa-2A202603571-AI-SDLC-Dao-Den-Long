@@ -13,14 +13,14 @@ const $ = (id: string) => document.getElementById(id) as HTMLElement;
 const sfx = new Sfx();
 
 // ---------- settings (persisted) ----------
-interface Settings { volume: number; sens: number }
+interface Settings { volume: number; sens: number; cb: boolean }
 const SETTINGS_KEY = 'ddl-settings';
 function loadSettings(): Settings {
   try {
     const s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
-    return { volume: typeof s.volume === 'number' ? s.volume : 0.7, sens: typeof s.sens === 'number' ? s.sens : 1 };
+    return { volume: typeof s.volume === 'number' ? s.volume : 0.7, sens: typeof s.sens === 'number' ? s.sens : 1, cb: s.cb === true };
   } catch {
-    return { volume: 0.7, sens: 1 };
+    return { volume: 0.7, sens: 1, cb: false };
   }
 }
 const settings = loadSettings();
@@ -176,6 +176,7 @@ function showSettings(back: () => void) {
   show(`<h1>Cài đặt</h1>
     <label>Âm lượng: <span id="vV">${Math.round(settings.volume * 100)}%</span></label><input id="vol" type="range" min="0" max="1" step="0.05" value="${settings.volume}">
     <label>Độ nhạy chuột: <span id="sV">${settings.sens.toFixed(2)}</span></label><input id="sens" type="range" min="0.2" max="3" step="0.1" value="${settings.sens}">
+    <label><input id="cb" type="checkbox" ${settings.cb ? "checked" : ""}> Bảng màu dễ phân biệt (mù màu)</label>
     <div style="font-size:13px;opacity:.75;margin-top:6px">Lưu tự động, giữ cho lần mở sau.</div>
     <div class="btns"><button id="bBack">Quay lại</button></div>`);
   const vol = $('vol') as HTMLInputElement;
@@ -190,6 +191,11 @@ function showSettings(back: () => void) {
   sens.oninput = () => {
     settings.sens = Number(sens.value);
     $('sV').textContent = settings.sens.toFixed(2);
+    saveSettings();
+  };
+  const cb = $('cb') as HTMLInputElement;
+  cb.onchange = () => {
+    settings.cb = cb.checked;
     saveSettings();
   };
   bind('bBack', back);
@@ -334,7 +340,18 @@ function sync(time: number, dt: number) {
     v.lampMat.color.set(l.lit ? PAL.lampCore : PAL.lampOff);
     v.lampMat.emissiveIntensity = l.lit ? 1.6 : frac * 0.6;
     v.light.intensity = l.lit ? 40 : frac * 4;
-    (v.ring.material as THREE.MeshBasicMaterial).opacity = l.lit ? 0.35 : 0;
+    const safe = sim.safeActive(l);
+    (v.ring.material as THREE.MeshBasicMaterial).opacity = safe ? 0.35 : 0;
+    const fuel = l.fuel / K.fuel_units;
+    const low = l.lit && fuel < TUNING.low_fuel_threshold;
+    const blinkOff = low && Math.floor(time) % 2 === 1; // 1 Hz slow blink
+    v.fuelBar.visible = v.fuelBg.visible = l.lit && !blinkOff;
+    const fw = Math.max(0.001, 1.5 * (fuel / TUNING.fuel_max));
+    v.fuelBar.scale.set(fw, 0.14, 1);
+    v.fuelBar.position.x = -0.75 + fw / 2; // left-aligned inside the 1.5 m track
+    if (blinkOff) (v.lampMat.emissiveIntensity = 0.2), (v.light.intensity = 8);
+    v.lamp.scale.setScalar(l.lit ? 1 : 0.8); // unlit lantern deflated 20%
+    v.tear.visible = !l.lit;
   });
   syncMap(sim.motes, moteViews, (m) => m.id, makeMote, (v) => v, (v, m) => {
     const ph = (m.x * 7.1 + m.z * 3.3) % 6.28;
@@ -346,7 +363,7 @@ function sync(time: number, dt: number) {
     v.g.lookAt(p.x, s.y, p.z);
     const st = s.state;
     v.body.color.set(st === 'stunned' ? PAL.shadeStun : PAL.shadeBody);
-    v.rim.color.set(st === 'stunned' ? PAL.shadeStun : PAL.shadeRim);
+    v.rim.color.set(st === 'stunned' ? PAL.shadeStun : settings.cb ? 0x00b3ff : PAL.shadeRim);
     const sc = st === 'spawning' ? Math.max(0.15, 1 - s.left / K.shade_spawning_ticks) : 1;
     v.g.scale.setScalar(sc);
     if (st === 'stunned') v.g.rotation.z = Math.sin(time * 14) * 0.25;
@@ -391,15 +408,19 @@ function updateHud(time: number) {
   const tl = Math.max(0, Math.ceil(sim.timeLeft));
   const clock = $('clock');
   clock.textContent = `${String(Math.floor(tl / 60)).padStart(2, '0')}:${String(tl % 60).padStart(2, '0')}`;
-  clock.classList.toggle('danger', sim.timeLeft <= 30);
+  const danger = sim.timeLeft <= 30;
+  clock.classList.toggle('danger', danger && !settings.cb);
+  clock.classList.toggle('dangerCb', danger && settings.cb);
+  if (danger && settings.cb) clock.textContent = '⚠ ' + clock.textContent;
   if (phase === 'play' && tl <= 10 && tl > 0 && tl !== lastCountdown) {
     lastCountdown = tl;
     sfx.countdown(tl);
   }
-  $('lamps').textContent = `${sim.litCount}/${sim.lanterns.length}`;
+  $('lamps').textContent = `${sim.litCount}/${sim.lanterns.length} (cần ${sim.winNeed})`;
+  $('cap').textContent = `${p.carried}/${sim.capacity}`;
   $('score').textContent = String(totalScore + sim.score);
   const bar = $('motebar');
-  if (bar.children.length !== TUNING.carry_capacity) bar.innerHTML = '<i></i>'.repeat(TUNING.carry_capacity);
+  if (bar.children.length !== sim.capacity) bar.innerHTML = '<i></i>'.repeat(sim.capacity);
   Array.from(bar.children).forEach((c, i) => c.classList.toggle('on', i < p.carried));
   const cd = (id: string, left: number, total: number, ready: boolean) => {
     const el = $(id);
@@ -414,7 +435,8 @@ function updateHud(time: number) {
   // hint near an unlit lantern
   let hint = '';
   for (const l of sim.lanterns) {
-    if (!l.lit && Math.hypot(l.x - p.x, l.z - p.z) <= TUNING.interact_radius) hint = `E — Nạp ánh sáng (${l.deposited}/${TUNING.lantern_cost})`;
+    if (l.lit && l.fuel < TUNING.fuel_max * K.fuel_units && Math.hypot(l.x - p.x, l.z - p.z) <= TUNING.interact_radius) hint = `E — Châm dầu (${Math.round(l.fuel / K.fuel_units)}/100)`;
+    if (!l.lit && Math.hypot(l.x - p.x, l.z - p.z) <= TUNING.interact_radius) hint = `E — Nạp ánh sáng (${l.deposited}/${sim.costOf(l)})`;
   }
   const h = $('hint');
   h.textContent = hint;
