@@ -19,14 +19,17 @@ if (!browser) {
   console.error('No Chrome/Edge found. Set CHROME_PATH.');
   process.exit(1);
 }
-const outDir = resolve(process.argv[2] || 'docs/proof/phase-1/screenshots');
+const outDir = resolve(process.argv[2] || 'docs/proof/phase-2/screenshots');
 mkdirSync(outDir, { recursive: true });
 const page = pathToFileURL(resolve('dist/web/index.html')).href;
 const shots = [
   ['menu', ''],
-  ['start', '?shot=start'],
-  ['lantern-lit-hud', '?shot=lit'],
-  ['game-over', '?shot=lose'],
+  ['intro-night2', '?shot=intro2'],
+  ['night1-hud', '?shot=n1'],
+  ['night2-bridge-drifter', '?shot=n2'],
+  ['night3-tiers', '?shot=n3'],
+  ['pause-menu', '?shot=pause'],
+  ['dawn', '?shot=dawn'],
 ];
 for (const [name, q] of shots) {
   const file = join(outDir, `${name}.png`);

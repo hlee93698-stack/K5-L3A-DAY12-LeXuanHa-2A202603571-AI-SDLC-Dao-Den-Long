@@ -145,7 +145,7 @@ export class Sim {
   private readonly invulnTicks: number;
   private readonly stunTicks: number;
   private readonly pulseCdTicks: number;
-  private nextWindDeg: number | null = null;
+  nextWindDeg: number | null = null; // read-only for the view (wind warning leaves)
 
   constructor(opts: SimOptions) {
     this.t = opts.tuning ?? TUNING;

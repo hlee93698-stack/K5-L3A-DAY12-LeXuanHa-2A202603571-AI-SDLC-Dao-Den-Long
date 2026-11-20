@@ -5,44 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Đảo Đèn Lồng</title>
 <style>
-  :root { --amber: #ffb347; --violet: #8b5cf6; --ink: #120a1f; --text: #fbefd9; }
-  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: var(--text);
-    font-family: system-ui, "Segoe UI", Roboto, sans-serif; }
+  :root { --text: #F5F1E6; --danger: #FF5A5F; --gold: #F2C14E; --amber: #FFB347; --panel: rgba(14,20,48,.72); --mote: #FFF6C2; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #0E1430; color: var(--text);
+    font-family: system-ui, "Segoe UI", Roboto, sans-serif; user-select: none; }
   canvas { display: block; width: 100vw; height: 100vh; }
-  #hud { position: fixed; top: 12px; left: 12px; display: grid; gap: 4px; font-size: 15px;
-    background: rgba(18,10,31,.55); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,179,71,.25);
-    pointer-events: none; min-width: 210px; }
-  #hud b { color: var(--amber); font-weight: 600; }
-  #flames { letter-spacing: 2px; color: var(--amber); }
-  #hint { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); font-size: 16px;
-    background: rgba(18,10,31,.65); padding: 6px 14px; border-radius: 8px; display: none; pointer-events: none; }
-  #keys { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 12px; opacity: .7;
-    pointer-events: none; white-space: nowrap; }
-  #flash { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, rgba(90,20,140,.7));
-    opacity: 0; pointer-events: none; transition: opacity .35s; }
-  #overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-    background: rgba(12,6,24,.72); }
-  #overlay .card { max-width: 520px; margin: 16px; padding: 24px 28px; border-radius: 14px; background: rgba(28,16,48,.92);
-    border: 1px solid rgba(255,179,71,.35); line-height: 1.5; }
-  #overlay h1 { margin: 0 0 6px; color: var(--amber); font-size: 30px; }
-  #overlay .big { font-size: 18px; margin-top: 14px; color: var(--amber); }
-  #overlay table { border-collapse: collapse; margin-top: 8px; font-size: 14px; }
-  #overlay td { padding: 2px 10px 2px 0; }
-  kbd { background: #2e2050; border: 1px solid #55408a; border-radius: 4px; padding: 0 5px; font-size: 13px; }
+  .hud { position: fixed; pointer-events: none; text-shadow: 0 1px 3px #000; }
+  #flames { top: 14px; left: 16px; font-size: 26px; letter-spacing: 4px; color: var(--amber); }
+  #flames .off { color: #5B5F6E; }
+  #clock { top: 10px; left: 50%; transform: translateX(-50%); font-size: 30px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  #clock.danger { color: var(--danger); animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: .35; } }
+  #topright { top: 12px; right: 16px; text-align: right; font-size: 18px; line-height: 1.5; }
+  #topright b { color: var(--gold); }
+  #motebar { bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+  #motebar i { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,229,138,.5); background: rgba(0,0,0,.25); }
+  #motebar i.on { background: radial-gradient(circle, var(--mote) 35%, #FFE58A 70%); box-shadow: 0 0 8px #FFE58A; }
+  #cds { bottom: 16px; right: 16px; display: flex; gap: 10px; }
+  .cd { width: 54px; height: 54px; border-radius: 12px; background: var(--panel); border: 2px solid var(--gold);
+    position: relative; overflow: hidden; font-size: 11px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px; box-sizing: border-box; }
+  .cd .ico { position: absolute; top: 6px; left: 0; right: 0; text-align: center; font-size: 20px; }
+  .cd .fill { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.6); }
+  .cd.off { border-color: #5B5F6E; }
+  #hint { bottom: 60px; left: 50%; transform: translateX(-50%); font-size: 17px; background: var(--panel); padding: 6px 14px; border-radius: 8px; display: none; }
+  #arrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 28px solid var(--amber);
+    filter: drop-shadow(0 0 6px var(--amber)); display: none; transform-origin: 50% 50%; }
+  #charm { top: 52px; left: 16px; font-size: 14px; color: #ff8a8f; display: none; }
+  #fps { bottom: 8px; left: 10px; font-size: 12px; opacity: .8; display: none; }
+  #flash { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, rgba(122,60,255,.6)); opacity: 0; pointer-events: none; transition: opacity .35s; }
+  #overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(14,20,48,.78); }
+  .card { max-width: 560px; margin: 16px; padding: 24px 28px; border-radius: 14px; background: rgba(27,35,80,.95); border: 1px solid rgba(242,193,78,.45); line-height: 1.5; }
+  .card h1 { margin: 0 0 6px; color: var(--gold); font-size: 30px; }
+  .card h2 { margin: 0 0 6px; color: var(--amber); font-size: 18px; font-weight: 500; }
+  .card .quote { font-style: italic; margin: 12px 0; padding-left: 12px; border-left: 3px solid var(--amber); }
+  .card .big { font-size: 20px; color: var(--gold); margin: 10px 0; }
+  .card table { border-collapse: collapse; font-size: 14px; margin-top: 8px; }
+  .card td { padding: 2px 12px 2px 0; }
+  .btns { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  button { font: inherit; color: var(--text); background: #2a3570; border: 1px solid var(--gold); border-radius: 8px; padding: 8px 14px; cursor: pointer; text-align: left; }
+  button:hover, button:focus { background: #3a4790; outline: none; }
+  label { display: block; margin: 10px 0 4px; }
+  input[type=range] { width: 100%; }
+  kbd { background: #2a3570; border: 1px solid #55609a; border-radius: 4px; padding: 0 5px; font-size: 13px; }
 </style>
 </head>
 <body>
 <canvas id="c"></canvas>
-<div id="hud">
-  <div>Lửa: <span id="flames"></span></div>
-  <div>Đom đóm mang: <b id="carried">0</b> / <span id="cap"></span></div>
-  <div>Đèn đã thắp: <b id="lit">0</b> / <span id="lcount"></span></div>
-  <div>Trời sáng sau: <b id="time">5:00</b></div>
-  <div>Điểm: <b id="score">0</b></div>
-  <div>Tỏa sáng: <span id="pulse">sẵn sàng</span></div>
+<div class="hud" id="flames"></div>
+<div class="hud" id="charm">Bùa Gió <span id="charmS"></span></div>
+<div class="hud" id="clock">5:00</div>
+<div class="hud" id="topright">Đèn <b id="lamps">0/5</b><br>Điểm <b id="score">0</b></div>
+<div class="hud" id="motebar"></div>
+<div class="hud" id="cds">
+  <div class="cd" id="cdDash"><span class="ico">💨</span><div class="fill"></div>Lướt</div>
+  <div class="cd" id="cdPulse"><span class="ico">✨</span><div class="fill"></div>Tỏa Sáng</div>
 </div>
-<div id="hint"></div>
-<div id="keys"><kbd>WASD</kbd> đi · <kbd>Space</kbd> nhảy · <kbd>E</kbd> nạp đèn · <kbd>F</kbd> tỏa sáng · kéo chuột / <kbd>←</kbd><kbd>→</kbd> xoay camera · <kbd>M</kbd> tắt tiếng</div>
+<div class="hud" id="hint"></div>
+<div class="hud" id="arrow"></div>
+<div class="hud" id="fps"></div>
 <div id="flash"></div>
 <div id="overlay"><div class="card" id="card"></div></div>
 <script src="main.js"></script>

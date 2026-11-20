@@ -13,12 +13,14 @@
     "typecheck": "tsc --noEmit",
     "test": "npm run build && tsc --noEmit && vitest run",
     "verify": "npm run build && node scripts/verify.mjs",
-    "headless": "node dist/headless.cjs"
+    "headless": "node dist/headless.cjs",
+    "bench": "npm run build && node scripts/bench-fps.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.17.6",
     "@types/three": "^0.170.0",
     "esbuild": "^0.24.0",
+    "puppeteer-core": "^23.10.4",
     "typescript": "^5.6.3",
     "vitest": "^2.1.8"
   },
