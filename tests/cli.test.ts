@@ -93,3 +93,19 @@ describe('headless CLI', () => {
     expect(run(['--seed', '1', '--night', '4', '--ticks', '1', '--out', join(dir, 'z.jsonl')]).code).not.toBe(0);
   });
 });
+
+describe('soak_cmd (Ticket-04)', () => {
+  it('runs N nights in one process and writes nights, crashes, results, mem_start_mb, mem_end_mb', () => {
+    const [scmd, ...sargs] = contract.soak_cmd.split(' ');
+    const out = join(dir, 'soak.json');
+    const r = spawnSync(scmd, [...sargs, '--seed', '7', '--nights', '3', '--out', out], { encoding: 'utf8' });
+    expect(r.status).toBe(0);
+    const s = JSON.parse(readFileSync(out, 'utf8'));
+    expect(Object.keys(s)).toEqual(['nights', 'crashes', 'results', 'mem_start_mb', 'mem_end_mb']);
+    expect(s.nights).toBe(3);
+    expect(s.crashes).toBe(0);
+    expect(s.results).toHaveLength(3);
+    expect(s.results.every((x: string) => x === 'won' || x === 'lost')).toBe(true);
+    expect(s.mem_end_mb).toBeLessThanOrEqual(1.2 * s.mem_start_mb);
+  }, 60000);
+});

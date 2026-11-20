@@ -19,10 +19,12 @@ function run(sim: Sim, n: number, input: InputState = inp()): GameEvent[] {
 const names = (evs: GameEvent[]) => evs.map((e) => e.name);
 const near = (a: number, b: number, eps = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(eps);
 
-describe('contract v1.2', () => {
+describe('contract v1.3', () => {
   it('game.contract.json tuning equals the standard numbers the game uses', () => {
     const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-    expect(c.contract_version).toBe('1.2'); // Ticket-03
+    expect(c.contract_version).toBe('1.3'); // Ticket-04 (changed from 1.2: adds bench_cmd, soak_cmd)
+    expect(c.bench_cmd).toBe('node scripts/bench.mjs');
+    expect(c.soak_cmd).toBe('node dist/headless.cjs --soak');
     expect(c.tuning).toEqual(TUNING);
   });
   it('standard numbers from Ticket-02', () => {
