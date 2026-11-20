@@ -1,0 +1,63 @@
+{
+  "id": "P1-15",
+  "requirement": "Inclusive radius: deposit at exactly interact_radius=3; no pickup when carry_capacity=10 is full",
+  "seed": 1,
+  "ticks": 10,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [
+      [
+        0,
+        0,
+        22
+      ]
+    ],
+    "shades": [],
+    "player": {
+      "pos": [
+        0,
+        0,
+        22
+      ],
+      "carried": 10
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 5,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "motes_active",
+      "equals": 1
+    },
+    {
+      "event": "deposit",
+      "tick": 6,
+      "data": {
+        "lantern_id": "L1",
+        "amount": 5,
+        "deposited": 5
+      }
+    },
+    {
+      "snapshot": 5,
+      "path": "player.carried",
+      "equals": 10
+    },
+    {
+      "event": "mote_picked",
+      "tick": 7,
+      "data": {
+        "carried": 6
+      }
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "id": "P1-02",
+  "requirement": "cam_yaw_deg rotates move (yaw 90: [0,1] -> +X); diagonal [1,1] is normalized to length 1",
+  "seed": 1,
+  "ticks": 120,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          0,
+          1
+        ],
+        "cam_yaw_deg": 90
+      },
+      {
+        "tick": 60,
+        "move": [
+          1,
+          1
+        ],
+        "cam_yaw_deg": 0
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 60,
+      "path": "player.pos",
+      "equals": [
+        6,
+        0,
+        0
+      ]
+    },
+    {
+      "snapshot": 120,
+      "path": "player.pos",
+      "equals": [
+        10.243,
+        0,
+        4.243
+      ]
+    }
+  ]
+}

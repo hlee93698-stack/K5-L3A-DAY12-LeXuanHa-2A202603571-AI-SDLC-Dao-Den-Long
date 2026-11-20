@@ -1,0 +1,73 @@
+{
+  "id": "P1-16",
+  "requirement": "Default Night 1 (20 motes, 3 shades from seed) runs a full night deterministically and ends with an end line",
+  "seed": 2026,
+  "ticks": 18000,
+  "snapshot_every": 600,
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          0,
+          1
+        ]
+      },
+      {
+        "tick": 300,
+        "move": [
+          1,
+          0
+        ],
+        "pulse": true
+      },
+      {
+        "tick": 301,
+        "pulse": false
+      },
+      {
+        "tick": 600,
+        "move": [
+          0,
+          -1
+        ]
+      },
+      {
+        "tick": 900,
+        "move": [
+          -1,
+          0
+        ],
+        "jump": true
+      },
+      {
+        "tick": 1200,
+        "move": [
+          0,
+          0
+        ],
+        "jump": false
+      }
+    ]
+  },
+  "expect": [
+    {
+      "exit": 0
+    },
+    {
+      "snapshot": 0,
+      "path": "motes_active",
+      "equals": 20
+    },
+    {
+      "snapshot": 0,
+      "path": "shades.length",
+      "equals": 3
+    },
+    {
+      "snapshot": 0,
+      "path": "lanterns.length",
+      "equals": 5
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "P1-08",
+  "requirement": "Pulse cooldown 2 s: press at tick 60 ignored, press at tick 120 fires (event tick 121)",
+  "seed": 1,
+  "ticks": 200,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "player": {
+      "carried": 5
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "pulse": true
+      },
+      {
+        "tick": 1,
+        "pulse": false
+      },
+      {
+        "tick": 60,
+        "pulse": true
+      },
+      {
+        "tick": 61,
+        "pulse": false
+      },
+      {
+        "tick": 120,
+        "pulse": true
+      },
+      {
+        "tick": 121,
+        "pulse": false
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "pulse",
+      "count": 2
+    },
+    {
+      "event": "pulse",
+      "tick": 1,
+      "count": 1
+    },
+    {
+      "event": "pulse",
+      "tick": 121,
+      "count": 1
+    },
+    {
+      "snapshot": 200,
+      "path": "player.carried",
+      "equals": 3
+    }
+  ]
+}

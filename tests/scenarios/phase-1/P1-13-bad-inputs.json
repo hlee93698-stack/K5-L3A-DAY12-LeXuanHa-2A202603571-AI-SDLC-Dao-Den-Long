@@ -1,0 +1,21 @@
+{
+  "id": "P1-13",
+  "requirement": "Malformed inputs file (ticks not strictly increasing) -> exit code 2",
+  "seed": 1,
+  "ticks": 10,
+  "inputs": {
+    "frames": [
+      {
+        "tick": 3
+      },
+      {
+        "tick": 2
+      }
+    ]
+  },
+  "expect": [
+    {
+      "exit": 2
+    }
+  ]
+}

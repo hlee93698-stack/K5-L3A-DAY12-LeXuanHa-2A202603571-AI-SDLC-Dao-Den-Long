@@ -1,0 +1,59 @@
+{
+  "id": "P1-04",
+  "requirement": "Motes within pickup_radius=1.5 (inclusive) are picked automatically; +per_mote=10 each",
+  "seed": 1,
+  "ticks": 60,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [
+      [
+        0,
+        0,
+        1.5
+      ],
+      [
+        0,
+        0,
+        5
+      ]
+    ],
+    "shades": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "mote_picked",
+      "tick": 1,
+      "data": {
+        "carried": 1
+      }
+    },
+    {
+      "event": "mote_picked",
+      "data": {
+        "carried": 2
+      }
+    },
+    {
+      "snapshot": 60,
+      "path": "motes_active",
+      "equals": 0
+    },
+    {
+      "snapshot": 60,
+      "path": "score",
+      "equals": 20
+    }
+  ]
+}

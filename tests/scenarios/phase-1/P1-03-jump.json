@@ -1,0 +1,32 @@
+{
+  "id": "P1-03",
+  "requirement": "Jump (edge-triggered) lifts player above Y=0 and lands back at Y=0",
+  "seed": 1,
+  "ticks": 60,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "jump": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 10,
+      "path": "player.pos.1",
+      "gt": 0.5
+    },
+    {
+      "snapshot": 60,
+      "path": "player.pos.1",
+      "equals": 0
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "id": "P1-09",
+  "requirement": "Shade contact: -1 flame, drop floor(carried*0.5), 1.5 s invulnerable; 0 flames -> lost (no_flames)",
+  "seed": 1,
+  "ticks": 300,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "pos": [
+          1,
+          0,
+          0
+        ]
+      }
+    ],
+    "player": {
+      "carried": 4
+    }
+  },
+  "expect": [
+    {
+      "event": "player_hit",
+      "tick": 1,
+      "data": {
+        "by": "shade",
+        "flames": 2,
+        "dropped": 2
+      }
+    },
+    {
+      "event": "player_hit",
+      "tick": 91,
+      "data": {
+        "by": "shade",
+        "flames": 1,
+        "dropped": 1
+      }
+    },
+    {
+      "event": "player_hit",
+      "tick": 181,
+      "data": {
+        "by": "shade",
+        "flames": 0,
+        "dropped": 0
+      }
+    },
+    {
+      "event": "game_over",
+      "tick": 181,
+      "data": {
+        "result": "lost",
+        "reason": "no_flames"
+      }
+    },
+    {
+      "end": {
+        "ticks": 181,
+        "state": "lost"
+      }
+    }
+  ]
+}

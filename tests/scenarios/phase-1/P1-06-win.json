@@ -1,0 +1,71 @@
+{
+  "id": "P1-06",
+  "requirement": "Lighting all 5 lanterns wins (all_lit); score = 100 + floor(299.98)*2 + 3 flames*50 = 848",
+  "seed": 1,
+  "ticks": 100,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "player": {
+      "pos": [
+        -23.776,
+        0,
+        7.725
+      ],
+      "carried": 5
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true
+      },
+      {
+        "id": "L2",
+        "lit": true
+      },
+      {
+        "id": "L3",
+        "lit": true
+      },
+      {
+        "id": "L4",
+        "lit": true
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "lantern_lit",
+      "tick": 1,
+      "data": {
+        "lantern_id": "L5"
+      }
+    },
+    {
+      "event": "game_over",
+      "tick": 1,
+      "data": {
+        "result": "won",
+        "reason": "all_lit"
+      }
+    },
+    {
+      "end": {
+        "type": "end",
+        "ticks": 1,
+        "state": "won",
+        "score": 848
+      }
+    }
+  ]
+}

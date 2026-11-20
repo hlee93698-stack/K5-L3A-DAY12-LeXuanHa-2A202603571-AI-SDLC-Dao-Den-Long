@@ -1,0 +1,95 @@
+{
+  "id": "P1-12",
+  "requirement": "Scenario setup emits no events and no score (pre-lit lantern, carried, flames, moved lantern)",
+  "seed": 1,
+  "ticks": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "player": {
+      "pos": [
+        1,
+        0,
+        2
+      ],
+      "carried": 3,
+      "flames": 2
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true
+      },
+      {
+        "id": "L2",
+        "pos": [
+          5,
+          0,
+          5
+        ],
+        "deposited": 2
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "score",
+      "equals": 0
+    },
+    {
+      "snapshot": 0,
+      "path": "player",
+      "equals": {
+        "pos": [
+          1,
+          0,
+          2
+        ],
+        "flames": 2,
+        "carried": 3
+      }
+    },
+    {
+      "snapshot": 0,
+      "path": "lanterns.0",
+      "equals": {
+        "id": "L1",
+        "pos": [
+          0,
+          0,
+          25
+        ],
+        "lit": true,
+        "deposited": 5
+      }
+    },
+    {
+      "snapshot": 0,
+      "path": "lanterns.1",
+      "equals": {
+        "id": "L2",
+        "pos": [
+          5,
+          0,
+          5
+        ],
+        "lit": false,
+        "deposited": 2
+      }
+    },
+    {
+      "no_event": "lantern_lit"
+    },
+    {
+      "no_event": "deposit"
+    },
+    {
+      "end": {
+        "score": 0
+      }
+    }
+  ]
+}

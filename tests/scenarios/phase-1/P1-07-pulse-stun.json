@@ -1,0 +1,77 @@
+{
+  "id": "P1-07",
+  "requirement": "Pulse stuns shades within pulse_radius=6 for 3 s, pushes 4 m, costs 1 light, +per_stun=20",
+  "seed": 1,
+  "ticks": 200,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          5,
+          0,
+          0
+        ]
+      }
+    ],
+    "player": {
+      "carried": 2
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "pulse": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "pulse",
+      "tick": 1,
+      "data": {
+        "stunned_ids": [
+          "S1"
+        ]
+      }
+    },
+    {
+      "snapshot": 10,
+      "path": "shades.0.state",
+      "equals": "stunned"
+    },
+    {
+      "snapshot": 10,
+      "path": "shades.0.pos",
+      "equals": [
+        8.933,
+        1,
+        0
+      ]
+    },
+    {
+      "snapshot": 10,
+      "path": "player.carried",
+      "equals": 1
+    },
+    {
+      "snapshot": 10,
+      "path": "score",
+      "equals": 20
+    },
+    {
+      "snapshot": 180,
+      "path": "shades.0.state",
+      "equals": "stunned"
+    },
+    {
+      "snapshot": 190,
+      "path": "shades.0.state",
+      "equals": "chase"
+    }
+  ]
+}

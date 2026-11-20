@@ -1,0 +1,35 @@
+{
+  "id": "P1-11",
+  "requirement": "time_left_s = duration - steps/60; reaching 0 loses (dawn)",
+  "seed": 1,
+  "ticks": 1000,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "time_left_s": 2
+  },
+  "expect": [
+    {
+      "snapshot": 60,
+      "path": "time_left_s",
+      "equals": 1
+    },
+    {
+      "event": "game_over",
+      "tick": 120,
+      "data": {
+        "result": "lost",
+        "reason": "dawn"
+      }
+    },
+    {
+      "end": {
+        "ticks": 120,
+        "state": "lost",
+        "score": 0
+      }
+    }
+  ]
+}
