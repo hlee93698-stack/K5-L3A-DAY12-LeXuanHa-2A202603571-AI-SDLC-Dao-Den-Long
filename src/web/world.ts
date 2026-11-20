@@ -185,36 +185,60 @@ export function buildTerrain(map: NightDef): THREE.Group {
 
 export function makePlayer() {
   const g = new THREE.Group();
-  // Áo dài silhouette: slimmer body, longer torso
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.29, 0.72, 4, 12), std(PAL.shirt));
-  body.position.y = 0.66;
-  // Waist sash
-  const sash = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.11, 12), std(PAL.scarf));
-  sash.position.y = 0.76;
-  // Neck scarf
-  const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.07, 8, 16), std(PAL.scarf));
-  scarf.rotation.x = Math.PI / 2;
-  scarf.position.y = 1.14;
-  // Head
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 16, 12), std(0xf3d2b3));
-  head.position.y = 1.38;
-  // Nón lá (wider, flatter — more authentic)
-  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.82, 0.35, 32), std(PAL.sand));
-  hat.position.y = 1.69;
-  // Right arm — raised, holding lantern
-  const armR = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), std(0xf3d2b3));
-  armR.position.set(0.38, 0.95, 0.12);
-  armR.rotation.z = -0.55;
-  // Left arm — relaxed
-  const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), std(PAL.shirt));
-  armL.position.set(-0.36, 0.9, 0);
-  armL.rotation.z = 0.45;
-  // Small hand-held lantern (at tip of right arm)
+  // Gojo Satoru chibi: dark high-collar uniform, white spiky hair, blindfold
+  const DARK = 0x141828;
+  const NAVY = 0x1c2240;
+  // Body — dark jacket, slightly wider chibi proportions
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.31, 0.68, 4, 12), std(NAVY));
+  body.position.y = 0.64;
+  // Outer coat (slightly wider layer for depth)
+  const coat = new THREE.Mesh(new THREE.CapsuleGeometry(0.35, 0.52, 4, 12), std(DARK));
+  coat.scale.z = 1.08;
+  coat.position.y = 0.58;
+  // High collar
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.3, 0.26, 12), std(DARK));
+  collar.position.y = 1.12;
+  // Head (pale chibi face — larger relative to body)
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 12), std(0xf5e8d8));
+  head.position.y = 1.5;
+  // Blindfold (white strip, Gojo's most iconic look)
+  const blindfold = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.11, 0.1), std(0xe8eaf0, { roughness: 0.2 }));
+  blindfold.position.set(0, 1.55, 0.3);
+  // Hair base (white/silver sphere, shifted back/up)
+  const hairBase = new THREE.Mesh(new THREE.SphereGeometry(0.35, 16, 12), std(0xdde0ea, { roughness: 0.55 }));
+  hairBase.position.set(0, 1.68, -0.06);
+  // Spiky hair strands pointing outward in various directions
+  const hairMat = std(0xe4e7f0, { roughness: 0.45 });
+  const spikeData: [number, number, number, number, number, number][] = [
+    [0, 2.1, 0.06, 0.15, 0, 0],
+    [0.2, 2.05, 0.02, 0.1, 0, -0.45],
+    [-0.2, 2.05, 0.02, 0.1, 0, 0.45],
+    [0.08, 2.0, -0.18, -0.28, 0.25, -0.1],
+    [-0.08, 2.0, -0.18, -0.28, -0.25, 0.1],
+    [0.32, 1.9, -0.08, 0.05, 0, -0.9],
+    [-0.32, 1.9, -0.08, 0.05, 0, 0.9],
+    [0.14, 1.95, -0.28, -0.5, 0.2, -0.15],
+    [-0.14, 1.95, -0.28, -0.5, -0.2, 0.15],
+  ];
+  for (const [px, py, pz, rx, ry, rz] of spikeData) {
+    const spike = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.44, 5), hairMat);
+    spike.position.set(px, py, pz);
+    spike.rotation.set(rx, ry, rz);
+    g.add(spike);
+  }
+  // Arms — dark sleeves
+  const armR = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), std(DARK));
+  armR.position.set(0.4, 0.9, 0.1);
+  armR.rotation.z = -0.5;
+  const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), std(DARK));
+  armL.position.set(-0.38, 0.88, 0);
+  armL.rotation.z = 0.42;
+  // Lantern carried in hand (Gojo holds it as his guiding light in this world)
   const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), new THREE.MeshBasicMaterial({ color: PAL.lampCore }));
-  lamp.position.set(0.62, 1.05, 0.22);
+  lamp.position.set(0.62, 1.0, 0.2);
   const light = new THREE.PointLight(PAL.lampOn, 6, 12, 1.4);
   light.position.copy(lamp.position);
-  g.add(body, sash, scarf, head, hat, armR, armL, lamp, light);
+  g.add(body, coat, collar, head, blindfold, hairBase, armR, armL, lamp, light);
   return { g, light };
 }
 
