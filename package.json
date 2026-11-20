@@ -1,0 +1,28 @@
+{
+  "name": "dao-den-long",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dao Den Long - 3D third-person lantern game (Day 12 AI SDLC lab)",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run build && tsc --noEmit && vitest run",
+    "verify": "npm run build && node scripts/verify.mjs",
+    "headless": "node dist/headless.cjs"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.6",
+    "@types/three": "^0.170.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  }
+}
