@@ -1,6 +1,7 @@
 // 3D view of one night: terrain from the standard map + entity meshes synced from the Sim.
 // Display only. Colors follow the Ticket-02 palette.
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 import type { NightDef } from '../sim/maps';
 import type { Sim } from '../sim/sim';
 import { TUNING } from '../sim/tuning';
@@ -299,35 +300,25 @@ export interface ShadeView {
   body: THREE.MeshStandardMaterial;
   rim: THREE.MeshBasicMaterial;
 }
+// Shade parts are baked into 3 shared geometries (body+wisps, outline, eyes): 3 draw calls per shade instead of 7,
+// which matters with 200 shades in the Ticket-04 bench scene.
+const shadeBodyGeo = mergeGeometries([
+  new THREE.SphereGeometry(0.75, 20, 14).scale(1, 1.4, 1).translate(0, 0.1, 0),
+  ...[0, 1, 2].map((i) => {
+    const a = (i / 3) * Math.PI * 2 + Math.PI / 6;
+    return new THREE.ConeGeometry(0.08, 0.55, 5).rotateZ(Math.PI).translate(Math.cos(a) * 0.3, -0.62, Math.sin(a) * 0.3);
+  }),
+].map((geo) => geo.toNonIndexed()))!;
+const shadeOutlineGeo = new THREE.SphereGeometry(0.83, 20, 14).scale(1, 1.4, 1).translate(0, 0.1, 0);
+const shadeEyeGeo = mergeGeometries(
+  ([[-0.27, 0.35], [0.27, -0.35]] as [number, number][]).map(([sx, rz]) => new THREE.SphereGeometry(0.1, 8, 6).rotateZ(rz).translate(sx, 0.35, 0.68)),
+)!;
+const shadeEyeMat = new THREE.MeshBasicMaterial({ color: 0xe8d8ff });
 export function makeShade(): ShadeView {
   const g = new THREE.Group();
-  // Ink-drop body: taller, tapers toward bottom
   const body = std(PAL.shadeBody, { roughness: 0.5 });
-  const blob = new THREE.Mesh(new THREE.SphereGeometry(0.75, 20, 14), body);
-  blob.scale.set(1, 1.4, 1);
-  blob.position.y = 0.1;
   const rim = new THREE.MeshBasicMaterial({ color: PAL.shadeRim, side: THREE.BackSide });
-  const outline = new THREE.Mesh(new THREE.SphereGeometry(0.83, 20, 14), rim);
-  outline.scale.set(1, 1.4, 1);
-  outline.position.y = 0.1;
-  // Eyes — angled to look menacing
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0xe8d8ff });
-  for (const [sx, rz] of [[-0.27, 0.35], [0.27, -0.35]] as [number, number][]) {
-    const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), eyeMat);
-    eye.position.set(sx, 0.35, 0.68);
-    eye.rotation.z = rz;
-    g.add(eye);
-  }
-  // 3 wisp tentacles at base (ink dripping)
-  const wispMat = std(PAL.shadeBody, { roughness: 0.9 });
-  for (let i = 0; i < 3; i++) {
-    const a = (i / 3) * Math.PI * 2 + Math.PI / 6;
-    const wisp = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.55, 5), wispMat);
-    wisp.rotation.z = Math.PI; // point downward
-    wisp.position.set(Math.cos(a) * 0.3, -0.62, Math.sin(a) * 0.3);
-    g.add(wisp);
-  }
-  g.add(blob, outline);
+  g.add(new THREE.Mesh(shadeBodyGeo, body), new THREE.Mesh(shadeOutlineGeo, rim), new THREE.Mesh(shadeEyeGeo, shadeEyeMat));
   return { g, body, rim };
 }
 

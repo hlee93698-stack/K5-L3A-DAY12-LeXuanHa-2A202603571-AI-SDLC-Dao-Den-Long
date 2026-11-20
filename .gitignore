@@ -5,3 +5,6 @@ release/
 .env.*
 *.log
 .claude/settings.local.json
+data/leaderboard.json
+bench.json
+soak.json

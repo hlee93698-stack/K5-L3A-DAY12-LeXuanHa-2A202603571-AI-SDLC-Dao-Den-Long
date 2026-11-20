@@ -30,6 +30,10 @@ const shots = [
   ['night3-tiers', '?shot=n3'],
   ['pause-menu', '?shot=pause'],
   ['dawn', '?shot=dawn'],
+  ['settings-accessibility', '?shot=settings'],
+  ['key-bindings', '?shot=keys'],
+  ['leaderboard-name-entry', '?shot=lbentry'],
+  ['bench-scene', '?bench=1&seed=42&duration=600'],
 ];
 for (const [name, q] of shots) {
   const file = join(outDir, `${name}.png`);
