@@ -74,6 +74,18 @@ export function buildTerrain(map: NightDef): THREE.Group {
       slat.position.set(x, 0.01, 0);
       g.add(slat);
     }
+    // Bamboo handrails on both sides
+    for (const sz of [-2.1, 2.1]) {
+      const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 18, 6), std(0x9ab870));
+      rail.rotation.z = Math.PI / 2;
+      rail.position.set(35, 0.65, sz);
+      g.add(rail);
+      for (let x = 27; x <= 43; x += 2.5) {
+        const post = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.7, 6), std(0x9ab870));
+        post.position.set(x, 0.35, sz);
+        g.add(post);
+      }
+    }
   }
   if (map.night === 3) {
     addIslandDisk(g, 0, 0, 45);
@@ -89,11 +101,23 @@ export function buildTerrain(map: NightDef): THREE.Group {
     g.add(t2);
     const tower = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 8, 24), std(PAL.wood));
     tower.position.y = 10;
+    // Red accent ring near tower top
+    const towerRing = new THREE.Mesh(new THREE.CylinderGeometry(2.08, 2.08, 0.18, 24), std(0xb82020));
+    towerRing.position.y = 13.5;
     const roof = new THREE.Mesh(new THREE.ConeGeometry(3, 2.5, 8), std(0x5a2a22));
     roof.position.y = 15.2;
     const bell = new THREE.Mesh(new THREE.SphereGeometry(0.9, 16, 12, 0, Math.PI * 2, 0, Math.PI / 2), std(PAL.gold, { metalness: 0.6, roughness: 0.4 }));
     bell.position.y = 13.4;
-    g.add(tower, roof, bell);
+    // 4 small hanging lanterns under roof eaves
+    for (let i = 0; i < 4; i++) {
+      const ea = (i / 4) * Math.PI * 2;
+      const hLamp = new THREE.Mesh(new THREE.SphereGeometry(0.18, 8, 6), std(PAL.lampOn, { emissive: new THREE.Color(PAL.lampOn), emissiveIntensity: 0.9 }));
+      hLamp.position.set(Math.cos(ea) * 2.4, 14.6, Math.sin(ea) * 2.4);
+      const hString = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.4, 4), std(PAL.wood));
+      hString.position.set(Math.cos(ea) * 2.4, 14.9, Math.sin(ea) * 2.4);
+      g.add(hLamp, hString);
+    }
+    g.add(tower, towerRing, roof, bell);
     for (const deg of [30, 150]) {
       const prof = new THREE.Shape();
       prof.moveTo(0, 0);
@@ -114,6 +138,7 @@ export function buildTerrain(map: NightDef): THREE.Group {
   // decorative trees near shores (never on the play paths)
   const treeMat = std(0x1f4a3c);
   const trunkMat = std(PAL.wood);
+  const palmFrondMat = new THREE.MeshLambertMaterial({ color: 0x3a7a4a, side: THREE.DoubleSide });
   for (const [cx, cz] of map.centers) {
     const R = map.night === 1 ? 40 : map.night === 2 ? 28 : 45;
     for (let i = 0; i < 18; i++) {
@@ -123,13 +148,34 @@ export function buildTerrain(map: NightDef): THREE.Group {
       const z = cz + r * Math.sin(a);
       if (map.ground(x, z) !== 0) continue;
       if (map.night === 2 && Math.abs(z) < 4 && x > 20 && x < 50) continue; // keep bridge ends clear
-      const h = 2 + rng() * 2;
       const tr = new THREE.Group();
-      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 1, 6), trunkMat);
-      trunk.position.y = 0.5;
-      const crown = new THREE.Mesh(new THREE.ConeGeometry(0.9, h, 7), treeMat);
-      crown.position.y = 1 + h / 2;
-      tr.add(trunk, crown);
+      if (rng() < 0.45) {
+        // Coconut palm: 3 angled trunk segments + frond fan
+        const lean = (rng() - 0.5) * 0.25;
+        for (let s = 0; s < 3; s++) {
+          const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.14, 1.0, 6), trunkMat);
+          seg.position.set(s * lean * 0.4, 0.5 + s, 0);
+          seg.rotation.z = lean;
+          tr.add(seg);
+        }
+        // 5 flat fronds radiating from crown
+        for (let f = 0; f < 5; f++) {
+          const fa = (f / 5) * Math.PI * 2;
+          const frond = new THREE.Mesh(new THREE.PlaneGeometry(0.28, 1.5), palmFrondMat);
+          frond.position.set(Math.cos(fa) * 0.28 + lean * 1.2, 3.1, Math.sin(fa) * 0.28);
+          frond.rotation.y = -fa;
+          frond.rotation.z = -0.65;
+          tr.add(frond);
+        }
+      } else {
+        // Conifer / pine (original style, slightly varied)
+        const h = 2 + rng() * 2;
+        const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.2, 1, 6), trunkMat);
+        trunk.position.y = 0.5;
+        const crown = new THREE.Mesh(new THREE.ConeGeometry(0.9, h, 7), treeMat);
+        crown.position.y = 1 + h / 2;
+        tr.add(trunk, crown);
+      }
       tr.position.set(x, 0, z);
       g.add(tr);
     }
@@ -139,20 +185,36 @@ export function buildTerrain(map: NightDef): THREE.Group {
 
 export function makePlayer() {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.33, 0.55, 4, 12), std(PAL.shirt));
-  body.position.y = 0.62;
-  const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.08, 8, 20), std(PAL.scarf));
+  // Áo dài silhouette: slimmer body, longer torso
+  const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.29, 0.72, 4, 12), std(PAL.shirt));
+  body.position.y = 0.66;
+  // Waist sash
+  const sash = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.31, 0.11, 12), std(PAL.scarf));
+  sash.position.y = 0.76;
+  // Neck scarf
+  const scarf = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.07, 8, 16), std(PAL.scarf));
   scarf.rotation.x = Math.PI / 2;
-  scarf.position.y = 1.08;
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.27, 16, 12), std(0xf3d2b3));
-  head.position.y = 1.32;
-  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.75, 0.38, 28), std(PAL.sand));
-  hat.position.y = 1.67;
+  scarf.position.y = 1.14;
+  // Head
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.26, 16, 12), std(0xf3d2b3));
+  head.position.y = 1.38;
+  // Nón lá (wider, flatter — more authentic)
+  const hat = new THREE.Mesh(new THREE.ConeGeometry(0.82, 0.35, 32), std(PAL.sand));
+  hat.position.y = 1.69;
+  // Right arm — raised, holding lantern
+  const armR = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), std(0xf3d2b3));
+  armR.position.set(0.38, 0.95, 0.12);
+  armR.rotation.z = -0.55;
+  // Left arm — relaxed
+  const armL = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.42, 4, 8), std(PAL.shirt));
+  armL.position.set(-0.36, 0.9, 0);
+  armL.rotation.z = 0.45;
+  // Small hand-held lantern (at tip of right arm)
   const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 10), new THREE.MeshBasicMaterial({ color: PAL.lampCore }));
-  lamp.position.set(0.6, 1.12, 0.15);
+  lamp.position.set(0.62, 1.05, 0.22);
   const light = new THREE.PointLight(PAL.lampOn, 6, 12, 1.4);
   light.position.copy(lamp.position);
-  g.add(body, scarf, head, hat, lamp, light);
+  g.add(body, sash, scarf, head, hat, armR, armL, lamp, light);
   return { g, light };
 }
 
@@ -215,17 +277,31 @@ export interface ShadeView {
 }
 export function makeShade(): ShadeView {
   const g = new THREE.Group();
+  // Ink-drop body: taller, tapers toward bottom
   const body = std(PAL.shadeBody, { roughness: 0.5 });
-  const blob = new THREE.Mesh(new THREE.SphereGeometry(0.8, 20, 14), body);
-  blob.scale.set(1, 1.15, 1);
+  const blob = new THREE.Mesh(new THREE.SphereGeometry(0.75, 20, 14), body);
+  blob.scale.set(1, 1.4, 1);
+  blob.position.y = 0.1;
   const rim = new THREE.MeshBasicMaterial({ color: PAL.shadeRim, side: THREE.BackSide });
-  const outline = new THREE.Mesh(new THREE.SphereGeometry(0.88, 20, 14), rim);
-  outline.scale.set(1, 1.15, 1);
+  const outline = new THREE.Mesh(new THREE.SphereGeometry(0.83, 20, 14), rim);
+  outline.scale.set(1, 1.4, 1);
+  outline.position.y = 0.1;
+  // Eyes — angled to look menacing
   const eyeMat = new THREE.MeshBasicMaterial({ color: 0xe8d8ff });
-  for (const sx of [-0.28, 0.28]) {
+  for (const [sx, rz] of [[-0.27, 0.35], [0.27, -0.35]] as [number, number][]) {
     const eye = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 6), eyeMat);
-    eye.position.set(sx, 0.25, 0.7);
+    eye.position.set(sx, 0.35, 0.68);
+    eye.rotation.z = rz;
     g.add(eye);
+  }
+  // 3 wisp tentacles at base (ink dripping)
+  const wispMat = std(PAL.shadeBody, { roughness: 0.9 });
+  for (let i = 0; i < 3; i++) {
+    const a = (i / 3) * Math.PI * 2 + Math.PI / 6;
+    const wisp = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.55, 5), wispMat);
+    wisp.rotation.z = Math.PI; // point downward
+    wisp.position.set(Math.cos(a) * 0.3, -0.62, Math.sin(a) * 0.3);
+    g.add(wisp);
   }
   g.add(blob, outline);
   return { g, body, rim };
@@ -233,13 +309,20 @@ export function makeShade(): ShadeView {
 
 export function makeDrifter() {
   const g = new THREE.Group();
-  const mat = new THREE.MeshBasicMaterial({ color: PAL.drifter, transparent: true, opacity: 0.85, side: THREE.DoubleSide });
+  // Wind-vortex form: stacked torus rings with shrinking radius = whirlwind silhouette
+  const mat = new THREE.MeshBasicMaterial({ color: PAL.drifter, transparent: true, opacity: 0.8, side: THREE.DoubleSide });
   for (let i = 0; i < 4; i++) {
-    const strip = new THREE.Mesh(new THREE.PlaneGeometry(0.35, 1.6), mat);
-    strip.position.set(0, 0, -i * 0.55);
-    strip.rotation.x = Math.PI / 2;
-    g.add(strip);
+    const r = 0.52 - i * 0.08;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.055, 6, 18), mat);
+    ring.position.y = i * 0.38;
+    ring.rotation.x = Math.PI / 2;
+    ring.rotation.z = (i * Math.PI) / 3; // stagger for spiral look
+    g.add(ring);
   }
+  // Thin central core
+  const core = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.4, 6), mat);
+  core.position.y = 0.5;
+  g.add(core);
   return g;
 }
 
