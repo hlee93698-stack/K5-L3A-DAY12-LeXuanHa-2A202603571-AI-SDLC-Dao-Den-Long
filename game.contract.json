@@ -5,7 +5,7 @@
   "run_cmd": "npm start",
   "headless_cmd": "node dist/headless.cjs",
   "bench_cmd": "node scripts/bench.mjs",
-  "soak_cmd": "node dist/headless.cjs --soak",
+  "soak_cmd": "node --no-opt --max-semi-space-size=1 dist/headless.cjs --soak",
   "tuning": {
     "player_speed": 6,
     "carry_capacity": 10,

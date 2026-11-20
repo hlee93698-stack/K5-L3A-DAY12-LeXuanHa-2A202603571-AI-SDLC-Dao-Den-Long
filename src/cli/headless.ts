@@ -65,10 +65,14 @@ function readJson(file: string, what: string): unknown {
 }
 
 // ---------- soak test ----------
-function runOneSoakNight(nightSeed: number, nightNum: 1 | 2 | 3): 'won' | 'lost' {
-  const map = getNight(nightNum);
-  const maxTicks = map.duration_s * K.tick_rate + K.tick_rate * 10;
-  const sim = new Sim({ seed: nightSeed, night: nightNum });
+// Load a night (construct its Sim), then run it to the end with seeded random input.
+function loadSoakNight(nightSeed: number, nightNum: 1 | 2 | 3): Sim {
+  return new Sim({ seed: nightSeed, night: nightNum });
+}
+
+function runSoakNight(sim: Sim, nightSeed: number, nightNum: 1 | 2 | 3): 'won' | 'lost' {
+  // The Night ends by itself at its standard duration (dawn); +1 s margin only as a safety cap.
+  const maxTicks = getNight(nightNum).duration_s * K.tick_rate + K.tick_rate;
   const rng = mulberry32(nightSeed ^ 0xdeadbeef);
   const inp = defaultInput();
   let dirTimer = 0;
@@ -103,24 +107,31 @@ function runSoak(argv: string[]) {
     process.stderr.write('usage: headless --soak --seed <int> --nights <int> --out <file.json>\n');
     process.exitCode = 1; return;
   }
+  const t0 = process.hrtime.bigint();
   let memStart = 0;
   let crashes = 0;
   const results: string[] = [];
   for (let i = 0; i < nights; i++) {
     const nightNum = ((i % 3) + 1) as 1 | 2 | 3;
     const nightSeed = seedToUint32(String(seed + i));
+    let sim: Sim | null = null;
     try {
-      const r = runOneSoakNight(nightSeed, nightNum);
-      results.push(r);
+      sim = loadSoakNight(nightSeed, nightNum);
+      // mem_start: RSS right after the first Night has finished loading
+      if (i === 0) memStart = process.memoryUsage().rss / 1024 / 1024;
+      results.push(runSoakNight(sim, nightSeed, nightNum));
     } catch {
       crashes++;
       results.push('crash');
+      if (i === 0 && memStart === 0) memStart = process.memoryUsage().rss / 1024 / 1024;
     }
-    if (i === 0) memStart = process.memoryUsage().rss / 1024 / 1024;
+    sim = null; // reset: drop the Night before the next one
   }
+  // mem_end: RSS after the last Night has been reset (dropped)
   const memEnd = process.memoryUsage().rss / 1024 / 1024;
   const r3 = (n: number) => Math.round(n * 10) / 10;
-  const data = { nights, crashes, results, mem_start_mb: r3(memStart), mem_end_mb: r3(memEnd) };
+  const durationS = Number(process.hrtime.bigint() - t0) / 1e9;
+  const data = { nights, crashes, results, mem_start_mb: r3(memStart), mem_end_mb: r3(memEnd), duration_s: r3(durationS) };
   const dir = path.dirname(path.resolve(out));
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(out, JSON.stringify(data, null, 2) + '\n');

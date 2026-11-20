@@ -95,13 +95,14 @@ describe('headless CLI', () => {
 });
 
 describe('soak_cmd (Ticket-04)', () => {
-  it('runs N nights in one process and writes nights, crashes, results, mem_start_mb, mem_end_mb', () => {
+  it('runs N nights in one process and writes nights, crashes, results, mem_start_mb, mem_end_mb, duration_s', () => {
     const [scmd, ...sargs] = contract.soak_cmd.split(' ');
     const out = join(dir, 'soak.json');
     const r = spawnSync(scmd, [...sargs, '--seed', '7', '--nights', '3', '--out', out], { encoding: 'utf8' });
     expect(r.status).toBe(0);
     const s = JSON.parse(readFileSync(out, 'utf8'));
-    expect(Object.keys(s)).toEqual(['nights', 'crashes', 'results', 'mem_start_mb', 'mem_end_mb']);
+    expect(Object.keys(s)).toEqual(['nights', 'crashes', 'results', 'mem_start_mb', 'mem_end_mb', 'duration_s']);
+    expect(s.duration_s).toBeGreaterThan(0);
     expect(s.nights).toBe(3);
     expect(s.crashes).toBe(0);
     expect(s.results).toHaveLength(3);

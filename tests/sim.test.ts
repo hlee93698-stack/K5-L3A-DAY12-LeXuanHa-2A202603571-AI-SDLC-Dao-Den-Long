@@ -24,7 +24,7 @@ describe('contract v1.3', () => {
     const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
     expect(c.contract_version).toBe('1.3'); // Ticket-04 (changed from 1.2: adds bench_cmd, soak_cmd)
     expect(c.bench_cmd).toBe('node scripts/bench.mjs');
-    expect(c.soak_cmd).toBe('node dist/headless.cjs --soak');
+    expect(c.soak_cmd).toBe('node --no-opt --max-semi-space-size=1 dist/headless.cjs --soak');
     expect(c.tuning).toEqual(TUNING);
   });
   it('standard numbers from Ticket-02', () => {
