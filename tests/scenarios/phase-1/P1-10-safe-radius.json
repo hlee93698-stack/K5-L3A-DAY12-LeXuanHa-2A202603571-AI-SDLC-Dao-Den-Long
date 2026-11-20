@@ -1,5 +1,6 @@
 {
   "id": "P1-10",
+  "changed": "shades are now blocked exactly at the 6 m edge (was pushed to 6.01)",
   "requirement": "Shades never enter safe_radius=6 of a lit lantern; player sheltering there is not hit",
   "seed": 1,
   "ticks": 600,
@@ -13,12 +14,12 @@
         "pos": [
           0,
           0,
-          10
+          12
         ]
       },
       {
         "pos": [
-          10,
+          6,
           0,
           30
         ]

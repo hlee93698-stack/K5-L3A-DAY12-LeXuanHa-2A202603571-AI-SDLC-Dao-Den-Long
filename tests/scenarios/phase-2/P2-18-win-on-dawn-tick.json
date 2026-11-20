@@ -1,0 +1,64 @@
+{
+  "id": "P2-18",
+  "requirement": "Win/lose evaluated after the tick: lighting the last lantern on the tick time runs out is a win",
+  "seed": 1,
+  "ticks": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "time_left_s": 0.05,
+    "player": {
+      "pos": [
+        -23.8,
+        0,
+        7.7
+      ],
+      "carried": 10
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true
+      },
+      {
+        "id": "L2",
+        "lit": true
+      },
+      {
+        "id": "L3",
+        "lit": true
+      },
+      {
+        "id": "L4",
+        "lit": true
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 2,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "game_over",
+      "tick": 3,
+      "data": {
+        "result": "won",
+        "reason": "all_lit"
+      }
+    },
+    {
+      "end": {
+        "ticks": 3,
+        "state": "won",
+        "score": 350
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "P2-04",
+  "requirement": "Hit drops floor(6/2)=3 motes of kind \"dropped\" in the 1.5-2.5 m ring around Mây, ttl 480 ticks",
+  "seed": 3,
+  "ticks": 5,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "pos": [
+          1,
+          0,
+          0
+        ]
+      }
+    ],
+    "player": {
+      "carried": 6
+    }
+  },
+  "expect": [
+    {
+      "event": "player_hit",
+      "tick": 1,
+      "data": {
+        "by": "shade",
+        "flames": 2,
+        "dropped": 3
+      }
+    },
+    {
+      "snapshot": 1,
+      "path": "motes_active",
+      "equals": 3
+    },
+    {
+      "snapshot": 1,
+      "path": "motes.0.kind",
+      "equals": "dropped"
+    },
+    {
+      "snapshot": 1,
+      "path": "motes.0.ttl_s",
+      "equals": 8
+    },
+    {
+      "dist_range": 1,
+      "list": "motes",
+      "kind": "dropped",
+      "min": 1.5,
+      "max": 2.5
+    },
+    {
+      "snapshot": 1,
+      "path": "player.carried",
+      "equals": 3
+    }
+  ]
+}

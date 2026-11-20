@@ -1,0 +1,64 @@
+{
+  "id": "P2-10",
+  "night": 2,
+  "requirement": "Night 2: the bamboo bridge (x 26..44, |z|<=2) is walkable; stepping off its side falls",
+  "seed": 1,
+  "ticks": 300,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": false,
+    "charms": [],
+    "player": {
+      "pos": [
+        26,
+        0,
+        0
+      ]
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          1,
+          0
+        ]
+      },
+      {
+        "tick": 90,
+        "move": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 90,
+      "path": "player.pos",
+      "equals": [
+        35,
+        0,
+        0
+      ]
+    },
+    {
+      "snapshot": 90,
+      "path": "player.grounded",
+      "equals": true
+    },
+    {
+      "event": "player_hit",
+      "data": {
+        "by": "fall"
+      }
+    }
+  ]
+}

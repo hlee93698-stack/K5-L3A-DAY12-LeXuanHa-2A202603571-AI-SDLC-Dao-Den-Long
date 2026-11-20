@@ -1,0 +1,67 @@
+{
+  "id": "P2-07",
+  "requirement": "Night 1 schedule: 20 motes at start, +1 at tick 240; shades S1+S2 at tick 300 (spawning 60 ticks), S3 at 780",
+  "seed": 11,
+  "ticks": 800,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_drifters": false
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "motes_active",
+      "equals": 20
+    },
+    {
+      "snapshot": 230,
+      "path": "motes_active",
+      "equals": 20
+    },
+    {
+      "snapshot": 240,
+      "path": "motes_active",
+      "equals": 21
+    },
+    {
+      "event": "shade_spawned",
+      "tick": 300,
+      "data": {
+        "id": "S1"
+      }
+    },
+    {
+      "event": "shade_spawned",
+      "tick": 300,
+      "data": {
+        "id": "S2"
+      }
+    },
+    {
+      "event": "shade_spawned",
+      "tick": 780,
+      "data": {
+        "id": "S3"
+      }
+    },
+    {
+      "event": "shade_spawned",
+      "count": 3
+    },
+    {
+      "snapshot": 300,
+      "path": "shades.0.state",
+      "equals": "spawning"
+    },
+    {
+      "snapshot": 350,
+      "path": "shades.0.state",
+      "equals": "spawning"
+    },
+    {
+      "snapshot": 360,
+      "path": "shades.0.state",
+      "equals": "wander"
+    }
+  ]
+}

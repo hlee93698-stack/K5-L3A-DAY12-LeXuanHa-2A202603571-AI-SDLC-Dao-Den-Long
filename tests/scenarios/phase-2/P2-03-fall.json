@@ -1,0 +1,84 @@
+{
+  "id": "P2-03",
+  "requirement": "Falling off the island (Y < -10): player_hit by fall, -1 flame, lose all motes; respawn at start after 60 ticks with 90 ticks invulnerability",
+  "seed": 1,
+  "ticks": 140,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "player": {
+      "pos": [
+        39.05,
+        0,
+        0
+      ],
+      "carried": 3
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          1,
+          0
+        ]
+      },
+      {
+        "tick": 100,
+        "move": [
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "player_hit",
+      "tick": 69,
+      "data": {
+        "by": "fall",
+        "flames": 2,
+        "dropped": 0,
+        "lost": 3
+      }
+    },
+    {
+      "event": "player_hit",
+      "count": 1
+    },
+    {
+      "snapshot": 69,
+      "path": "player.carried",
+      "equals": 0
+    },
+    {
+      "snapshot": 128,
+      "path": "player.pos.1",
+      "lt": -10
+    },
+    {
+      "snapshot": 129,
+      "path": "player.pos",
+      "equals": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "snapshot": 129,
+      "path": "player.invuln",
+      "equals": true
+    },
+    {
+      "snapshot": 129,
+      "path": "player.flames",
+      "equals": 2
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "id": "P2-14",
+  "night": 2,
+  "requirement": "Pulse on a fleeing drifter drops all stolen motes (removed 120 ticks later); pulse on a chasing drifter makes it flee without stealing",
+  "seed": 1,
+  "ticks": 250,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": false,
+    "player": {
+      "carried": 6
+    },
+    "drifters": [
+      {
+        "id": "D1",
+        "pos": [
+          3,
+          0,
+          0
+        ],
+        "state": "flee",
+        "stolen": 3
+      },
+      {
+        "id": "D2",
+        "pos": [
+          0,
+          0,
+          4
+        ],
+        "state": "chase"
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "pulse": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "drifter_drop",
+      "tick": 1,
+      "data": {
+        "drifter_id": "D1",
+        "amount": 3
+      }
+    },
+    {
+      "snapshot": 1,
+      "path": "motes_active",
+      "equals": 3
+    },
+    {
+      "snapshot": 1,
+      "path": "motes.0.kind",
+      "equals": "dropped"
+    },
+    {
+      "snapshot": 1,
+      "path": "drifters.1.state",
+      "equals": "flee"
+    },
+    {
+      "snapshot": 119,
+      "path": "drifters.0.state",
+      "equals": "flee"
+    },
+    {
+      "snapshot": 120,
+      "path": "drifters.0.state",
+      "equals": "removed"
+    },
+    {
+      "no_event": "drifter_steal"
+    },
+    {
+      "snapshot": 240,
+      "path": "drifters.1.state",
+      "equals": "removed"
+    },
+    {
+      "snapshot": 240,
+      "path": "drifters.1.stolen",
+      "equals": 0
+    }
+  ]
+}

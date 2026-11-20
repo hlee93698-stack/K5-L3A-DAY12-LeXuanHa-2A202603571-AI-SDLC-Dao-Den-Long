@@ -1,6 +1,7 @@
 {
   "id": "P1-12",
-  "requirement": "Scenario setup emits no events and no score (pre-lit lantern, carried, flames, moved lantern)",
+  "changed": "pre-lit lantern deposited = 10; player snapshot has more fields in v1.1",
+  "requirement": "Scenario setup emits no gameplay events and no score (pre-lit lantern, carried, flames, moved lantern)",
   "seed": 1,
   "ticks": 10,
   "scenario": {
@@ -41,16 +42,22 @@
     },
     {
       "snapshot": 0,
-      "path": "player",
-      "equals": {
-        "pos": [
-          1,
-          0,
-          2
-        ],
-        "flames": 2,
-        "carried": 3
-      }
+      "path": "player.pos",
+      "equals": [
+        1,
+        0,
+        2
+      ]
+    },
+    {
+      "snapshot": 0,
+      "path": "player.flames",
+      "equals": 2
+    },
+    {
+      "snapshot": 0,
+      "path": "player.carried",
+      "equals": 3
     },
     {
       "snapshot": 0,
@@ -63,7 +70,7 @@
           25
         ],
         "lit": true,
-        "deposited": 5
+        "deposited": 10
       }
     },
     {

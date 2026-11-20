@@ -1,0 +1,73 @@
+{
+  "id": "P2-11",
+  "night": 3,
+  "requirement": "Night 3: 7 lanterns; ramp at 30 deg climbs to tier 1 (Y=3); tier 2 cliff (r<=8) blocks",
+  "seed": 1,
+  "ticks": 300,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": false,
+    "player": {
+      "pos": [
+        25.981,
+        0,
+        15
+      ]
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          -0.866025,
+          -0.5
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "lanterns.length",
+      "equals": 7
+    },
+    {
+      "snapshot": 0,
+      "path": "lanterns.0.pos",
+      "equals": [
+        0,
+        6,
+        6
+      ]
+    },
+    {
+      "snapshot": 120,
+      "path": "player.pos.1",
+      "equals": 3
+    },
+    {
+      "snapshot": 120,
+      "path": "player.grounded",
+      "equals": true
+    },
+    {
+      "snapshot": 300,
+      "path": "player.pos.1",
+      "equals": 0
+    },
+    {
+      "snapshot": 300,
+      "path": "player.pos.0",
+      "gt": 6.5
+    },
+    {
+      "no_event": "player_hit"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "id": "P2-09",
+  "night": 2,
+  "requirement": "Night 2: 6 lanterns; jump pad at (20,0,18) launches Mây (vy 14, 24 m/s) onto island B",
+  "seed": 1,
+  "ticks": 120,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": false,
+    "player": {
+      "pos": [
+        20,
+        0,
+        17
+      ]
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "night",
+      "equals": 2
+    },
+    {
+      "snapshot": 0,
+      "path": "lanterns.length",
+      "equals": 6
+    },
+    {
+      "snapshot": 0,
+      "path": "lanterns.3.pos",
+      "equals": [
+        70,
+        0,
+        20
+      ]
+    },
+    {
+      "snapshot": 10,
+      "path": "player.grounded",
+      "equals": false
+    },
+    {
+      "snapshot": 120,
+      "path": "player.grounded",
+      "equals": true
+    },
+    {
+      "snapshot": 120,
+      "path": "player.pos.0",
+      "gt": 45
+    },
+    {
+      "no_event": "player_hit"
+    }
+  ]
+}

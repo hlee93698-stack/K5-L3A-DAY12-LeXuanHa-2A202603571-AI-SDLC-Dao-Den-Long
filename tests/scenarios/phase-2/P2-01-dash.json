@@ -1,0 +1,89 @@
+{
+  "id": "P2-01",
+  "requirement": "Dash: 14 m/s for 12 ticks (2.8 m) in move direction; cooldown 90 ticks from dash start",
+  "seed": 1,
+  "ticks": 100,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          0,
+          1
+        ],
+        "dash": true
+      },
+      {
+        "tick": 1,
+        "dash": false
+      },
+      {
+        "tick": 30,
+        "dash": true
+      },
+      {
+        "tick": 31,
+        "dash": false
+      },
+      {
+        "tick": 90,
+        "dash": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "dash",
+      "count": 2
+    },
+    {
+      "event": "dash",
+      "tick": 1,
+      "count": 1
+    },
+    {
+      "event": "dash",
+      "tick": 91,
+      "count": 1
+    },
+    {
+      "snapshot": 1,
+      "path": "player.vel",
+      "equals": [
+        0,
+        0,
+        14
+      ]
+    },
+    {
+      "snapshot": 1,
+      "path": "player.dash_cd_s",
+      "equals": 1.5
+    },
+    {
+      "snapshot": 12,
+      "path": "player.pos",
+      "equals": [
+        0,
+        0,
+        2.8
+      ]
+    },
+    {
+      "snapshot": 13,
+      "path": "player.pos",
+      "equals": [
+        0,
+        0,
+        2.9
+      ]
+    }
+  ]
+}

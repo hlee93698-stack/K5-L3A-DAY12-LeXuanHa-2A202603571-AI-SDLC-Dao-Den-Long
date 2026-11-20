@@ -1,6 +1,7 @@
 {
   "id": "P1-15",
-  "requirement": "Inclusive radius: deposit at exactly interact_radius=3; no pickup when carry_capacity=10 is full",
+  "changed": "interact_radius 3 -> 2, lantern_cost 10",
+  "requirement": "Inclusive radius: deposit at exactly interact_radius=2; no pickup while carry_capacity=10 is full; pickup happens before interact in a tick",
   "seed": 1,
   "ticks": 10,
   "snapshot_every": 1,
@@ -11,7 +12,7 @@
       [
         0,
         0,
-        22
+        23
       ]
     ],
     "shades": [],
@@ -19,7 +20,7 @@
       "pos": [
         0,
         0,
-        22
+        23
       ],
       "carried": 10
     }
@@ -43,8 +44,8 @@
       "tick": 6,
       "data": {
         "lantern_id": "L1",
-        "amount": 5,
-        "deposited": 5
+        "amount": 10,
+        "deposited": 10
       }
     },
     {
@@ -56,7 +57,7 @@
       "event": "mote_picked",
       "tick": 7,
       "data": {
-        "carried": 6
+        "carried": 1
       }
     }
   ]

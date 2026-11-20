@@ -1,0 +1,74 @@
+{
+  "id": "P2-02",
+  "requirement": "Standing dash uses facing; dash in the air keeps altitude (y frozen for 12 ticks)",
+  "seed": 1,
+  "ticks": 40,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          1,
+          0
+        ]
+      },
+      {
+        "tick": 10,
+        "move": [
+          0,
+          0
+        ]
+      },
+      {
+        "tick": 15,
+        "jump": true
+      },
+      {
+        "tick": 20,
+        "dash": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "dash",
+      "tick": 21
+    },
+    {
+      "snapshot": 20,
+      "path": "player.pos.1",
+      "equals": 0.5
+    },
+    {
+      "snapshot": 21,
+      "path": "player.pos.1",
+      "equals": 0.5
+    },
+    {
+      "snapshot": 32,
+      "path": "player.pos",
+      "equals": [
+        3.8,
+        0.5,
+        0
+      ]
+    },
+    {
+      "snapshot": 25,
+      "path": "player.grounded",
+      "equals": false
+    },
+    {
+      "snapshot": 33,
+      "path": "player.pos.1",
+      "lt": 0.5
+    }
+  ]
+}

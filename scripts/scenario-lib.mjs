@@ -48,10 +48,28 @@ function check(exp, run) {
     if ('lt' in exp) return [v < exp.lt, `${desc} (want < ${exp.lt})`];
   }
   if ('shade_clear_of' in exp) {
+    // shades stay at/outside r (output is rounded to 3 dp -> 0.002 tolerance)
     const [px, pz] = exp.shade_clear_of;
+    const from = exp.from_tick ?? 0;
     let min = Infinity;
-    for (const s of snaps) for (const sh of s.shades) min = Math.min(min, Math.hypot(sh.pos[0] - px, sh.pos[2] - pz));
-    return [min > exp.r, `min shade distance to (${px}, ${pz}) over ${snaps.length} snapshots = ${min.toFixed(3)} (want > ${exp.r})`];
+    const used = snaps.filter((s) => s.tick >= from);
+    for (const s of used) for (const sh of s.shades) min = Math.min(min, Math.hypot(sh.pos[0] - px, sh.pos[2] - pz));
+    return [min >= exp.r - 0.002, `min shade distance to (${px}, ${pz}) over ${used.length} snapshots from tick ${from} = ${min.toFixed(3)} (want >= ${exp.r})`];
+  }
+  if ('moved' in exp) {
+    const [a, b] = exp.moved.map((t) => snaps.find((s) => s.tick === t));
+    if (!a || !b) return [false, `missing snapshot ${exp.moved}`];
+    const d = Math.hypot(b.player.pos[0] - a.player.pos[0], b.player.pos[2] - a.player.pos[2]);
+    return [Math.abs(d - exp.approx) <= (exp.tol ?? 0.01), `player XZ displacement ticks ${exp.moved.join('->')} = ${d.toFixed(3)} (want ${exp.approx} ± ${exp.tol ?? 0.01})`];
+  }
+  if ('dist_range' in exp) {
+    const s = snaps.find((x) => x.tick === exp.dist_range);
+    if (!s) return [false, `no snapshot at tick ${exp.dist_range}`];
+    const p = s.player.pos;
+    const items = s[exp.list].filter((it) => !exp.kind || it.kind === exp.kind);
+    const ds = items.map((it) => Math.hypot(it.pos[0] - p[0], it.pos[2] - p[2]));
+    const ok = ds.length > 0 && ds.every((d) => d >= exp.min - 0.002 && d <= exp.max + 0.002);
+    return [ok, `snapshot@${exp.dist_range} ${items.length} ${exp.list}${exp.kind ? ' (' + exp.kind + ')' : ''} at distances [${ds.map((d) => d.toFixed(2)).join(', ')}] from player (want ${exp.min}..${exp.max})`];
   }
   return [false, `unknown expectation ${JSON.stringify(exp)}`];
 }
@@ -62,7 +80,7 @@ export function runSpec(spec, outDir) {
   const runDir = join(outDir, 'runs');
   mkdirSync(inDir, { recursive: true });
   mkdirSync(runDir, { recursive: true });
-  const args = ['--seed', String(spec.seed ?? 1), '--night', '1'];
+  const args = ['--seed', String(spec.seed ?? 1), '--night', String(spec.night ?? 1)];
   const writeIn = (kind, v) => {
     const p = join(inDir, `${spec.id}.${kind}.json`).replace(/\\/g, '/');
     writeFileSync(p, typeof v === 'string' ? v : JSON.stringify(v, null, 2) + '\n');

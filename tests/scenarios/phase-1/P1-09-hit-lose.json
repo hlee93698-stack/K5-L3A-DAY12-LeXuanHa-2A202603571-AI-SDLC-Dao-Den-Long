@@ -1,8 +1,9 @@
 {
   "id": "P1-09",
-  "requirement": "Shade contact: -1 flame, drop floor(carried*0.5), 1.5 s invulnerable; 0 flames -> lost (no_flames)",
+  "changed": "hit shade recoils 2 m/60 ticks; dropped motes now land on the ground",
+  "requirement": "Shade contact: -1 flame, drop floor(carried/2), 90 ticks invulnerable; 0 flames -> lost (no_flames)",
   "seed": 1,
-  "ticks": 300,
+  "ticks": 400,
   "scenario": {
     "random_motes": false,
     "random_shades": false,
@@ -31,8 +32,12 @@
       }
     },
     {
+      "snapshot": 10,
+      "path": "motes_active",
+      "equals": 2
+    },
+    {
       "event": "player_hit",
-      "tick": 91,
       "data": {
         "by": "shade",
         "flames": 1,
@@ -41,16 +46,10 @@
     },
     {
       "event": "player_hit",
-      "tick": 181,
-      "data": {
-        "by": "shade",
-        "flames": 0,
-        "dropped": 0
-      }
+      "count": 3
     },
     {
       "event": "game_over",
-      "tick": 181,
       "data": {
         "result": "lost",
         "reason": "no_flames"
@@ -58,7 +57,6 @@
     },
     {
       "end": {
-        "ticks": 181,
         "state": "lost"
       }
     }

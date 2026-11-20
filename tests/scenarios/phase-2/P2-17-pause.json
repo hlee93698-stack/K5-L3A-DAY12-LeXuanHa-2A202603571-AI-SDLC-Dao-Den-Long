@@ -1,0 +1,89 @@
+{
+  "id": "P2-17",
+  "requirement": "Pause: tick advances but sim_tick, time and movement freeze; snapshot state \"paused\"; events paused/resumed",
+  "seed": 1,
+  "ticks": 40,
+  "snapshot_every": 5,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          0,
+          1
+        ]
+      },
+      {
+        "tick": 10,
+        "pause": true
+      },
+      {
+        "tick": 11,
+        "pause": false
+      },
+      {
+        "tick": 20,
+        "pause": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "paused",
+      "tick": 11
+    },
+    {
+      "event": "resumed",
+      "tick": 21
+    },
+    {
+      "snapshot": 15,
+      "path": "state",
+      "equals": "paused"
+    },
+    {
+      "snapshot": 15,
+      "path": "sim_tick",
+      "equals": 10
+    },
+    {
+      "snapshot": 15,
+      "path": "player.pos",
+      "equals": [
+        0,
+        0,
+        1
+      ]
+    },
+    {
+      "snapshot": 15,
+      "path": "time_left_s",
+      "equals": 299.833
+    },
+    {
+      "snapshot": 30,
+      "path": "state",
+      "equals": "playing"
+    },
+    {
+      "snapshot": 30,
+      "path": "sim_tick",
+      "equals": 20
+    },
+    {
+      "snapshot": 30,
+      "path": "player.pos",
+      "equals": [
+        0,
+        0,
+        2
+      ]
+    }
+  ]
+}

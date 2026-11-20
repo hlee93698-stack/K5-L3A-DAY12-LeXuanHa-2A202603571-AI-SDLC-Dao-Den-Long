@@ -1,0 +1,37 @@
+{
+  "id": "P2-19",
+  "night": 3,
+  "requirement": "Night 3 full length (21600 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts)",
+  "seed": 77,
+  "ticks": 21600,
+  "snapshot_every": 3600,
+  "scenario": {
+    "player": {
+      "flames": 1000
+    }
+  },
+  "expect": [
+    {
+      "exit": 0
+    },
+    {
+      "end": {
+        "ticks": 21600,
+        "state": "lost"
+      }
+    },
+    {
+      "event": "game_over",
+      "tick": 21600,
+      "data": {
+        "result": "lost",
+        "reason": "dawn"
+      }
+    },
+    {
+      "snapshot": 0,
+      "path": "charms.length",
+      "equals": 2
+    }
+  ]
+}

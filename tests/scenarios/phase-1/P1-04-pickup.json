@@ -1,6 +1,7 @@
 {
   "id": "P1-04",
-  "requirement": "Motes within pickup_radius=1.5 (inclusive) are picked automatically; +per_mote=10 each",
+  "changed": "pickup_radius 1.5 -> 1.0; no score on pickup (score is per deposited mote)",
+  "requirement": "Motes within pickup_radius=1.0 (inclusive) are picked automatically; picking gives no score",
   "seed": 1,
   "ticks": 60,
   "scenario": {
@@ -10,7 +11,7 @@
       [
         0,
         0,
-        1.5
+        1.05
       ],
       [
         0,
@@ -53,7 +54,7 @@
     {
       "snapshot": 60,
       "path": "score",
-      "equals": 20
+      "equals": 0
     }
   ]
 }

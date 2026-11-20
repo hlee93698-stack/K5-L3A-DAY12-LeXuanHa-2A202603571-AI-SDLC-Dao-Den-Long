@@ -1,0 +1,90 @@
+{
+  "id": "P2-06",
+  "requirement": "Shade states: chase within 12 m, wander beyond; spawning -> wander; hit -> recoil 2 m over 60 ticks -> chase",
+  "seed": 1,
+  "ticks": 61,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          1,
+          0,
+          0
+        ]
+      },
+      {
+        "id": "S2",
+        "pos": [
+          0,
+          0,
+          -30
+        ]
+      },
+      {
+        "id": "S3",
+        "pos": [
+          -20,
+          0,
+          0
+        ],
+        "state": "spawning",
+        "state_ticks_left": 10
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "shades.0.state",
+      "equals": "chase"
+    },
+    {
+      "snapshot": 0,
+      "path": "shades.1.state",
+      "equals": "wander"
+    },
+    {
+      "snapshot": 9,
+      "path": "shades.2.state",
+      "equals": "spawning"
+    },
+    {
+      "snapshot": 10,
+      "path": "shades.2.state",
+      "equals": "wander"
+    },
+    {
+      "event": "player_hit",
+      "tick": 1
+    },
+    {
+      "snapshot": 1,
+      "path": "shades.0.state",
+      "equals": "recoil"
+    },
+    {
+      "snapshot": 60,
+      "path": "shades.0.state",
+      "equals": "recoil"
+    },
+    {
+      "snapshot": 61,
+      "path": "shades.0.state",
+      "equals": "chase"
+    },
+    {
+      "snapshot": 61,
+      "path": "shades.0.pos",
+      "equals": [
+        2.933,
+        1,
+        0
+      ]
+    }
+  ]
+}

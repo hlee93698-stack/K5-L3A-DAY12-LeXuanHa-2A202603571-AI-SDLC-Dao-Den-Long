@@ -1,0 +1,67 @@
+{
+  "id": "P2-13",
+  "night": 2,
+  "requirement": "Drifter: idle -> chase when Mây carries >=5 within 15 m; steals min(3, n); flees 240 ticks then removed",
+  "seed": 1,
+  "ticks": 320,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": false,
+    "player": {
+      "carried": 6
+    },
+    "drifters": [
+      {
+        "id": "D1",
+        "pos": [
+          8,
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "drifters.0.state",
+      "equals": "idle"
+    },
+    {
+      "snapshot": 10,
+      "path": "drifters.0.state",
+      "equals": "chase"
+    },
+    {
+      "event": "drifter_steal",
+      "data": {
+        "drifter_id": "D1",
+        "amount": 3,
+        "carried": 3
+      }
+    },
+    {
+      "snapshot": 100,
+      "path": "drifters.0.state",
+      "equals": "flee"
+    },
+    {
+      "snapshot": 320,
+      "path": "drifters.0.state",
+      "equals": "removed"
+    },
+    {
+      "snapshot": 320,
+      "path": "drifters.0.stolen",
+      "equals": 3
+    },
+    {
+      "no_event": "player_hit"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "id": "P2-08",
+  "requirement": "Lighting a lantern evicts shades inside 6 m to the edge within 30 ticks without damage; then they are blocked at the edge",
+  "seed": 1,
+  "ticks": 120,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "pos": [
+          0,
+          0,
+          24
+        ]
+      }
+    ],
+    "player": {
+      "pos": [
+        0,
+        0,
+        23
+      ],
+      "carried": 10
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "lantern_lit",
+      "tick": 1
+    },
+    {
+      "snapshot": 30,
+      "path": "shades.0.pos",
+      "equals": [
+        0,
+        1,
+        19
+      ]
+    },
+    {
+      "no_event": "player_hit"
+    },
+    {
+      "shade_clear_of": [
+        0,
+        25
+      ],
+      "r": 6,
+      "from_tick": 30
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "id": "P2-05",
+  "requirement": "Dropped motes can be picked up again; they disappear when ttl runs out",
+  "seed": 1,
+  "ticks": 101,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [
+      {
+        "pos": [
+          0,
+          0,
+          0.5
+        ],
+        "kind": "dropped",
+        "ttl_ticks": 100
+      },
+      {
+        "pos": [
+          10,
+          0,
+          0
+        ],
+        "kind": "dropped",
+        "ttl_ticks": 100
+      }
+    ],
+    "shades": []
+  },
+  "expect": [
+    {
+      "event": "mote_picked",
+      "tick": 1,
+      "data": {
+        "carried": 1
+      }
+    },
+    {
+      "snapshot": 99,
+      "path": "motes_active",
+      "equals": 1
+    },
+    {
+      "snapshot": 99,
+      "path": "motes.0.ttl_s",
+      "equals": 0.017
+    },
+    {
+      "snapshot": 100,
+      "path": "motes_active",
+      "equals": 0
+    }
+  ]
+}

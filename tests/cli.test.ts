@@ -29,7 +29,25 @@ describe('headless CLI', () => {
     expect(snaps.map((s) => s.tick)).toEqual([0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
     expect(snaps.every((s) => s.sim_tick === s.tick)).toBe(true);
     expect(ls[ls.length - 1]).toEqual({ type: 'end', ticks: 100, state: 'playing', score: 0 });
-    expect(snaps[0].player).toEqual({ pos: [0, 0, 0], flames: 3, carried: 0 });
+    expect(ls[0]).toMatchObject({ type: 'snapshot', tick: 0 });
+    expect(ls[1]).toEqual({ type: 'event', tick: 0, name: 'night_start', data: { night: 1 } });
+    expect(snaps[0].player).toEqual({
+      pos: [0, 0, 0], vel: [0, 0, 0], grounded: true, flames: 3, carried: 0, invuln: false, dash_cd_s: 0, pulse_cd_s: 0, charm_s: 0,
+    });
+    expect(Object.keys(snaps[0])).toEqual(
+      ['type', 'tick', 'sim_tick', 'night', 'state', 'time_left_s', 'score', 'wind', 'player', 'lanterns', 'shades', 'motes_active', 'motes', 'drifters', 'charms'],
+    );
+    expect(snaps[0].motes[0]).toMatchObject({ kind: 'random', ttl_s: null });
+  });
+  it.each([1, 2, 3])('night %i: a full night (up to 21600 ticks) runs headless in <= 30 s', (night) => {
+    const s = file(`full${night}.json`, { player: { flames: 100000 } });
+    const out = join(dir, `full${night}.jsonl`);
+    const t0 = Date.now();
+    expect(run(['--seed', '3', '--night', String(night), '--scenario', s, '--ticks', '21600', '--out', out, '--snapshot-every', '60']).code).toBe(0);
+    const ms = Date.now() - t0;
+    expect(ms).toBeLessThan(30000);
+    const ls = lines(out);
+    expect(ls[ls.length - 1]).toMatchObject({ type: 'end', ticks: night === 1 ? 18000 : night === 2 ? 19800 : 21600 });
   });
   it('is deterministic across two process runs (incl. generated ids)', () => {
     const inputs = file('det-in.json', { frames: [{ tick: 0, move: [1, 1], cam_yaw_deg: 45 }, { tick: 200, pulse: true }] });
@@ -72,6 +90,6 @@ describe('headless CLI', () => {
   it('missing file -> exit 2; missing required arg -> non-zero', () => {
     expect(run(['--seed', '1', '--night', '1', '--inputs', join(dir, 'nope.json'), '--ticks', '1', '--out', join(dir, 'z.jsonl')]).code).toBe(2);
     expect(run(['--seed', '1', '--night', '1', '--ticks', '1']).code).not.toBe(0);
-    expect(run(['--seed', '1', '--night', '2', '--ticks', '1', '--out', join(dir, 'z.jsonl')]).code).not.toBe(0);
+    expect(run(['--seed', '1', '--night', '4', '--ticks', '1', '--out', join(dir, 'z.jsonl')]).code).not.toBe(0);
   });
 });

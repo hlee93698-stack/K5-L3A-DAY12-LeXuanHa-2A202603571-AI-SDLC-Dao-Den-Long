@@ -1,0 +1,72 @@
+{
+  "id": "P2-15",
+  "night": 2,
+  "requirement": "Wind Charm C1 at (35,0,0): pickup -> 600 ticks, run 7.2 m/s, respawn after 2700 ticks",
+  "seed": 1,
+  "ticks": 61,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": false,
+    "player": {
+      "pos": [
+        34,
+        0,
+        0
+      ]
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          1,
+          0
+        ]
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "charm_picked",
+      "tick": 1,
+      "data": {
+        "charm_id": "C1",
+        "charm_ticks": 600
+      }
+    },
+    {
+      "snapshot": 1,
+      "path": "player.charm_s",
+      "equals": 10
+    },
+    {
+      "snapshot": 1,
+      "path": "charms.0",
+      "equals": {
+        "id": "C1",
+        "pos": [
+          35,
+          0,
+          0
+        ],
+        "available": false,
+        "respawn_s": 45
+      }
+    },
+    {
+      "snapshot": 61,
+      "path": "player.pos",
+      "equals": [
+        41.3,
+        0,
+        0
+      ]
+    }
+  ]
+}

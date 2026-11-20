@@ -1,0 +1,58 @@
+{
+  "id": "P2-12",
+  "night": 3,
+  "requirement": "Night 3 wind: gust at sim tick 1800 for 300 ticks pushes Mây 2 m/s (10 m total)",
+  "seed": 4,
+  "ticks": 2110,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "random_drifters": false,
+    "wind_enabled": true
+  },
+  "expect": [
+    {
+      "snapshot": 1790,
+      "path": "wind",
+      "equals": {
+        "active": false,
+        "dir_deg": null
+      }
+    },
+    {
+      "snapshot": 1800,
+      "path": "wind.active",
+      "equals": true
+    },
+    {
+      "snapshot": 2090,
+      "path": "wind.active",
+      "equals": true
+    },
+    {
+      "snapshot": 2100,
+      "path": "wind.active",
+      "equals": false
+    },
+    {
+      "snapshot": 0,
+      "path": "player.pos",
+      "equals": [
+        0,
+        0,
+        -30
+      ]
+    },
+    {
+      "moved": [
+        1790,
+        2100
+      ],
+      "approx": 10,
+      "tol": 0.01
+    }
+  ]
+}

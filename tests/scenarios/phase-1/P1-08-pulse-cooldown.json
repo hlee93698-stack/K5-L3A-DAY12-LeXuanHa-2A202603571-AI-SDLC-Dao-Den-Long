@@ -1,6 +1,7 @@
 {
   "id": "P1-08",
-  "requirement": "Pulse cooldown 2 s: press at tick 60 ignored, press at tick 120 fires (event tick 121)",
+  "changed": "pulse_cooldown_s 2 -> 3 (180 ticks), cost 3",
+  "requirement": "Pulse cooldown 3 s: pulse at tick 1; presses landing on ticks 61 and 179 are ignored; press landing on tick 181 fires",
   "seed": 1,
   "ticks": 200,
   "scenario": {
@@ -9,7 +10,7 @@
     "motes": [],
     "shades": [],
     "player": {
-      "carried": 5
+      "carried": 9
     }
   },
   "inputs": {
@@ -31,11 +32,19 @@
         "pulse": false
       },
       {
-        "tick": 120,
+        "tick": 178,
         "pulse": true
       },
       {
-        "tick": 121,
+        "tick": 179,
+        "pulse": false
+      },
+      {
+        "tick": 180,
+        "pulse": true
+      },
+      {
+        "tick": 181,
         "pulse": false
       }
     ]
@@ -52,7 +61,7 @@
     },
     {
       "event": "pulse",
-      "tick": 121,
+      "tick": 181,
       "count": 1
     },
     {

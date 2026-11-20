@@ -1,6 +1,7 @@
 {
   "id": "P1-16",
-  "requirement": "Default Night 1 (20 motes, 3 shades from seed) runs a full night deterministically and ends with an end line",
+  "changed": "no shades at tick 0 any more (first 2 spawn at tick 300)",
+  "requirement": "Default Night 1 (20 motes on standard points, no shades at start) runs a full night deterministically",
   "seed": 2026,
   "ticks": 18000,
   "snapshot_every": 600,
@@ -62,7 +63,7 @@
     {
       "snapshot": 0,
       "path": "shades.length",
-      "equals": 3
+      "equals": 0
     },
     {
       "snapshot": 0,
