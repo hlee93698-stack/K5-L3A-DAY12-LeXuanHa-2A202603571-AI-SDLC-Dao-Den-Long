@@ -1,0 +1,2 @@
+# exit 2
+# stderr: error: scenario.lanterns[0].id: expected one of L1, L2, L3, L4, L5
