@@ -13,11 +13,12 @@ Mỗi phase là một phiên bản. Muốn xem lại đúng code của phiên b�
 
 Luật mô phỏng và output headless giữ nguyên (mọi scenario cũ vẫn đạt, `verify` sinh lại không khác). Chỉ thêm:
 
-- **Contract:** `contract_version` 1.3, thêm `bench_cmd` (`node scripts/bench.mjs`) và `soak_cmd` (`node dist/headless.cjs --soak`).
-- **Bench:** cảnh `?bench=1` (Đêm 1, 200 Bóng Mực, 100 đom đóm, 3 đèn sáng, camera bay vòng), ghi `bench.json`.
-- **Soak:** cờ `--soak --seed --nights --out` cho lệnh headless, ghi `soak.json`.
-- **Bảng xếp hạng:** nhập tên sau khi thua/Bình Minh, xem từ menu, top 10; `data/leaderboard.json` qua `/api/leaderboard`; xuất bằng `npm start -- --export-leaderboard out.json`.
-- **Trợ năng:** đổi phím (đổi chỗ khi trùng, khôi phục mặc định), giảm chuyển động, chữ lớn ×1.25, chữ nội dung ≥ 18 px, mũi tên báo Bóng Mực mới xuất hiện.
+- **Contract:** `contract_version` 1.3, thêm `bench_cmd` (`node scripts/bench.mjs`) và `soak_cmd` (`node --no-opt --max-semi-space-size=1 dist/headless.cjs --soak`).
+- **Bench:** cảnh `?bench=1` (Đêm 1, Mây đứng ở (0,0,0), 200 Bóng Mực, 100 đom đóm, 3 đèn sáng, camera bay vòng), ghi `bench.json` (`peak_mem_mb: null`, JS heap ở `js_heap_peak_mb`).
+- **Soak:** cờ `--soak --seed --nights --out` cho lệnh headless, ghi `soak.json` (gồm `duration_s`).
+- **Bảng xếp hạng:** nhập tên sau khi thua/Bình Minh, điểm = tổng các Đêm đã thắng, xem từ menu, top 10; `data/leaderboard.json` qua `/api/leaderboard`; xuất bằng `npm start -- --export-leaderboard out.json`.
+- **Trợ năng:** đổi phím (đổi chỗ khi trùng, khôi phục mặc định), giảm chuyển động, chữ lớn ×1.25, chữ nội dung ≥ 18 px, phụ đề cho Bóng Mực xuất hiện (kèm mũi tên chỉ hướng), gió sắp thổi, 10 giây cuối, đèn sắp cạn dầu.
+- **Phát hành:** `npm run package` tạo `release/dao-den-long-v1.0.0.zip` (game web tĩnh + headless) để đính kèm Release.
 - **Hiệu năng:** Bóng Mực gộp từ 7 mesh còn 3 mesh dùng chung geometry.
 - **Hình ảnh** (commit `7e18051`): Mây mặc áo dài, đội nón lá, cầm đèn lồng nhỏ; Bóng Mực hình giọt mực, Gió Lạc dạng xoáy, cây dừa, lan can cầu tre, đèn treo trên tháp. Chỉ ở `src/web/`.
 

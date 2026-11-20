@@ -86,6 +86,14 @@ Công cụ: **Claude Code** (VS Code extension), model Claude Opus. Harness: [AG
 | Gõ một lệnh bash có `cat > file` không có input nên treo 2 phút (lặp lại lỗi Phase 2 dù AGENTS.md đã cấm) | Lệnh bị timeout | Dừng task. Bài học: quy tắc trong AGENTS.md chưa đủ, cần hook chặn lệnh chờ stdin |
 | Tắt server cũ bằng TaskStop nhưng tiến trình node con vẫn giữ cổng 5173 | `EADDRINUSE` khi khởi động lại | Tìm PID theo cổng rồi dừng đúng tiến trình đó |
 | README còn mô tả luật Phase 2 (thắng khi thắp hết đèn, điểm cũ) suốt Phase 3 | Rà README khi thêm mục Phase 4 | Viết lại theo luật Phase 3, kiểm tra luật hút dầu trong `sim.ts` trước khi ghi |
+| **`bench.json` và `soak.json` chưa từng được commit**: dòng `bench.json` trong `.gitignore` chặn file ở mọi thư mục, kể cả `docs/proof/phase-4/` | Rà lại ticket từng dòng sau khi "xong"; `git status` không hiện hai file dù vừa sinh lại | Neo luật ignore về gốc (`/bench.json`, `/soak.json`) |
+| Bench ẩn Mây, trong khi ticket ghi "Mây đứng yên tại (0,0,0)" | Rà lại ticket | Hiện Mây ở (0,0,0) |
+| `peak_mem_mb` ghi JS heap, trong khi ticket định nghĩa là RSS (cho phép `null` với web) | Rà lại ticket | Ghi `null`, JS heap chuyển sang `js_heap_peak_mb`, giải thích ở README |
+| Soak đo `mem_start` sau khi Đêm 1 **kết thúc** (ticket: sau khi **tải xong**), thiếu `duration_s` | Rà lại ticket | Đo đúng chỗ, thêm `duration_s`. Đo đúng thì +28% (V8 nở một lần, heap thật đứng yên) → soak_cmd thêm `--no-opt --max-semi-space-size=1`, có số đo chứng minh không rò rỉ |
+| Điểm bảng xếp hạng khi thua cộng cả Đêm đang thua (ticket: tổng điểm các Đêm đã thắng) | Rà lại ticket | Chỉ cộng các Đêm đã thắng |
+| Gió sắp thổi và 10 s cuối chỉ có âm thanh, chưa có chỉ báo hình ảnh như ticket yêu cầu | Rà lại ticket | Thêm dòng phụ đề cho gió, 10 s cuối, Bóng Mực xuất hiện, đèn sắp cạn dầu |
+
+**Bài học lớn nhất của Phase 4:** lần đầu báo "xong" dựa trên bản tóm tắt yêu cầu tự viết, không đọc lại nguyên văn ticket. Rà lại từng dòng tìm ra 6 chỗ lệch, trong đó một chỗ (bằng chứng không được commit) làm trượt DoD.
 
 **Token (ước tính):** ~250–300k cho Phase 4 (gồm phần thiết kế lại nhân vật/môi trường trước đó và một lần nén ngữ cảnh). _(Cập nhật số thật từ `/cost`.)_
 

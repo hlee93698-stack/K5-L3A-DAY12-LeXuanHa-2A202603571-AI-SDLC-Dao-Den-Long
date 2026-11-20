@@ -9,13 +9,15 @@ Game 3D góc nhìn thứ ba. **Mây**, người giữ đèn nhỏ tuổi, đi qu
 
 ## Cài đặt và chạy (3 lệnh)
 
-Cần Node.js ≥ 18 (macOS, Linux hoặc Windows).
+**Yêu cầu hệ thống:** Node.js ≥ 18; Windows 10+, macOS hoặc Linux; trình duyệt có WebGL 2 (Chrome, Edge, Firefox bản mới); GPU tích hợp là đủ (đo trên Intel Iris Xe). Bench cần Chrome hoặc Edge.
 
 ```bash
 npm ci
 npm run build
 npm start          # mở http://localhost:5173 (hoặc mở thẳng dist/web/index.html)
 ```
+
+**Không muốn cài Node?** Tải `dao-den-long-v1.0.0.zip` ở GitHub Release v1.0.0, giải nén, mở `web/index.html` (bảng xếp hạng khi đó lưu trong trình duyệt). Tạo gói này bằng `npm run package` (ra `release/`).
 
 ## Điều khiển
 
@@ -33,7 +35,7 @@ npm start          # mở http://localhost:5173 (hoặc mở thẳng dist/web/in
 
 Mọi phím (trừ mũi tên, `P`, `Enter`, `F3`) đổi được ở **Cài đặt → Phím điều khiển**. Gán một phím đang dùng cho hành động khác thì hai hành động đổi phím cho nhau (có cảnh báo). Có nút "Khôi phục mặc định". Lưu qua lần mở sau.
 
-**Trợ năng (Cài đặt):** âm lượng, độ nhạy chuột, bảng màu dễ phân biệt, **giảm chuyển động** (tắt chớp màn hình khi bị chạm), **chữ lớn** (×1.25). Chữ nội dung tối thiểu 18 px. Khi Bóng Mực mới xuất hiện, một mũi tên đỏ ở mép màn hình chỉ hướng nó trong 2 s.
+**Trợ năng (Cài đặt):** âm lượng, độ nhạy chuột, bảng màu dễ phân biệt, **giảm chuyển động** (tắt chớp màn hình khi bị chạm), **chữ lớn** (×1.25). Chữ nội dung tối thiểu 18 px. **Phụ đề cho tín hiệu âm thanh** (giữa trên màn hình): Bóng Mực xuất hiện (kèm mũi tên đỏ ở mép màn hình chỉ hướng nó trong 2 s), gió sắp thổi, đếm 10 giây cuối, đèn sắp cạn dầu (fuel < 30, thanh dầu cũng nhấp nháy). Game không có rung camera.
 
 ## Luật chơi (số chuẩn Ticket-02, luật Ticket-03)
 
@@ -59,7 +61,7 @@ Tổng điểm game là tổng điểm các Đêm đã thắng.
 
 ## Bảng xếp hạng
 
-Sau khi thua một Đêm hoặc sau màn Bình Minh, bấm "Lưu vào bảng xếp hạng" và nhập tên (3–12 ký tự `A-Z 0-9 _`). Xem từ menu: **Bảng xếp hạng** (top 10, cùng điểm thì ai đạt trước xếp trên).
+Sau khi thua một Đêm hoặc sau màn Bình Minh, bấm "Lưu vào bảng xếp hạng" và nhập tên (3–12 ký tự `A-Z 0-9 _`). Điểm lưu là tổng điểm các Đêm đã thắng (Đêm đang thua không tính). Xem từ menu: **Bảng xếp hạng** (top 10, cùng điểm thì ai đạt trước xếp trên).
 
 - Khi chạy `npm start`: lưu ở `data/leaderboard.json` qua `/api/leaderboard` (máy chủ kiểm tra dữ liệu trước khi ghi). Mở thẳng file `dist/web/index.html` thì lưu trong `localStorage` của trình duyệt.
 - Xuất: `npm start -- --export-leaderboard out.json` → `{"entries":[{"name","score","nights_won","achieved_at","seed"}]}`.
@@ -85,12 +87,15 @@ node dist/headless.cjs --seed 42 --night 1 --ticks 600 --out out.jsonl \
 ```bash
 npm run build
 node scripts/bench.mjs --seed 42 --duration 30 --out bench.json   # bench_cmd (cần Chrome hoặc Edge; đặt CHROME_PATH nếu ở chỗ khác)
-node dist/headless.cjs --soak --seed 7 --nights 10 --out soak.json # soak_cmd
+node --no-opt --max-semi-space-size=1 dist/headless.cjs --soak --seed 7 --nights 10 --out soak.json # soak_cmd
 ```
 
-- **Bench:** mở game trong Chrome headless ở 1280×720 với `?bench=1`: Đêm 1, 200 Bóng Mực, 100 đom đóm, 3 đèn sáng, camera bay vòng (bán kính 30 m, cao 15 m, 15 s/vòng, ngược chiều kim đồng hồ). Bỏ 3 s khởi động rồi đo. Ghi `avg_fps`, `p1_low_fps`, `frame_ms_p95`, `load_ms`, `peak_mem_mb`, `renderer`, `os`… Ngưỡng: avg ≥ 60, 1% low ≥ 30, load ≤ 10 s.
-- **Soak:** chạy 10 Đêm liên tiếp trong một tiến trình với input ngẫu nhiên tất định, ghi `nights`, `crashes`, `results`, `mem_start_mb`, `mem_end_mb`. Đạt khi 0 crash và RAM cuối ≤ 1.2 × RAM sau Đêm đầu.
-- Kết quả trên máy em (i5-1135G7, Iris Xe): avg **115 FPS**, 1% low **65**, load **1.2 s**; soak 0 crash, RAM +3.6%. Chi tiết: [docs/notes/phase-4.md](docs/notes/phase-4.md), [bench.json](docs/proof/phase-4/bench.json), [soak.json](docs/proof/phase-4/soak.json).
+- **Bench:** mở game trong Chrome headless ở 1280×720 với `?bench=1`: Đêm 1, 200 Bóng Mực, 100 đom đóm, 3 đèn sáng, camera bay vòng (bán kính 30 m, cao 15 m, 15 s/vòng, ngược chiều kim đồng hồ). Bỏ 3 s khởi động rồi đo. Ghi `avg_fps`, `p1_low_fps`, `frame_ms_p95`, `load_ms`, `peak_mem_mb`, `renderer`, `os`… Ngưỡng: avg ≥ 60, 1% low ≥ 30, load ≤ 10 s. Mây đứng yên ở (0,0,0); trong cảnh bench không sinh thêm thực thể, không sát thương, không hao dầu, không kết thúc Đêm.
+- **vsync:** Chrome headless không gắn với màn hình nên khung hình không bị khóa theo tần số quét; bench còn chạy với `--disable-gpu-vsync --disable-frame-rate-limit` → `vsync_off: true`.
+- **`peak_mem_mb` = `null`:** ticket định nghĩa là RSS của tiến trình. Trang web không đọc được RSS của trình duyệt, còn đo RSS từ bên ngoài trong lúc chạy thì làm khựng khung hình. Vì vậy ghi `null` và kèm `js_heap_peak_mb` (đỉnh JS heap của trang, lấy mẫu 1 lần/giây ngay trong trang) để tham khảo.
+- **Soak:** chạy 10 Đêm liên tiếp trong một tiến trình với input ngẫu nhiên tất định, ghi `nights`, `crashes`, `results`, `mem_start_mb` (RSS ngay sau khi tải xong Đêm đầu), `mem_end_mb` (RSS sau khi bỏ Đêm cuối), `duration_s`. Đạt khi 0 crash và RAM cuối ≤ 1.2 × RAM đầu.
+- **Vì sao soak có cờ `--no-opt --max-semi-space-size=1`:** tiến trình Node rất nhỏ (~36 MB), và V8 nở thêm ~10 MB một lần (mã JIT tối ưu, young-generation) trong Đêm đầu, đủ vượt 20% dù không có rò rỉ: heap thật sau GC đứng yên 4.4–4.7 MB qua 10 Đêm, RSS đứng yên ~46 MB từ Đêm 10 tới Đêm 30. Hai cờ này bỏ tầng tối ưu JIT và thu nhỏ young-generation, không đổi luật hay output. Rò rỉ thật (heap tăng mãi) vẫn bị phát hiện.
+- Kết quả trên máy em (i5-1135G7, Iris Xe, cắm sạc): avg **111 FPS**, 1% low **63**, load **1.4 s**; soak 0 crash, RSS 35.9 → 40.3 MB (+12%). Lần chạy bench đầu tiên sau khi build thường thấp hơn (1% low có lần ~29), các lần sau ổn định. Chi tiết: [docs/notes/phase-4.md](docs/notes/phase-4.md), [bench.json](docs/proof/phase-4/bench.json), [soak.json](docs/proof/phase-4/soak.json).
 
 ## Test và kiểm chứng
 

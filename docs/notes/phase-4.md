@@ -21,17 +21,18 @@
 | D1 | "rải đều trên đảo (seed 42)" cho 200 Bóng Mực bench | Phân phối đều theo góc + bán kính ngẫu nhiên trong r ≤ 38 m dùng mulberry32(42). Visual-only (không qua sim), dùng wander tốc độ 2 m/s, đổi mục tiêu mỗi 2 s |
 | D2 | "CCW khi nhìn từ trên xuống" | Three.js Y-up: θ tăng → pos = (30·cosθ, 15, 30·sinθ), xuất phát θ=0 tại (30,15,0) |
 | D3 | `load_ms` "từ lúc tiến trình bắt đầu" | Date.now() ở đầu bench.mjs (trước khi mở browser) → thời điểm frame bench đầu tiên được vẽ (window.__benchReady) |
-| D4 | `peak_mem_mb` trong browser | Đỉnh `performance.memory.usedJSHeapSize` (JS heap của trang), lấy mẫu 1 lần/giây NGAY TRONG trang. Không phải RSS của tiến trình Chrome. _(Đã đổi khi làm: ban đầu dùng `page.metrics()` qua CDP nhưng mỗi lần gọi làm khựng khung hình, kéo tụt 1% low.)_ |
+| D4 | `peak_mem_mb` trong browser | Ticket định nghĩa là RSS và cho phép `null` nếu bản web không đo được. Ghi **`null`**; đỉnh `performance.memory.usedJSHeapSize` (JS heap của trang, lấy mẫu 1 lần/giây NGAY TRONG trang) ghi riêng ở `js_heap_peak_mb`. _(Đã đổi khi kiểm lại: bản đầu ghi JS heap vào `peak_mem_mb`, sai định nghĩa.)_ _(Đã đổi khi làm: ban đầu dùng `page.metrics()` qua CDP nhưng mỗi lần gọi làm khựng khung hình, kéo tụt 1% low.)_ |
 | D5 | vsync_off | Chrome headless không có display, rAF không bị giới hạn bởi màn hình → ghi `vsync_off: true` |
-| D6 | mem_start vs mem_end trong soak | mem_start = RSS sau khi kết thúc đêm 1; mem_end = RSS sau khi kết thúc đêm cuối cùng |
+| D6 | mem_start vs mem_end trong soak | mem_start = RSS ngay sau khi tạo xong Sim của Đêm đầu (trước tick đầu tiên); mem_end = RSS sau khi bỏ Sim của Đêm cuối. Thêm `duration_s` (thời gian chạy cả soak). _(Đã đổi khi kiểm lại: bản đầu đo mem_start sau khi Đêm 1 kết thúc, sai định nghĩa.)_ Đo đúng định nghĩa thì V8 nở ~10 MB một lần trong Đêm đầu (JIT tối ưu, young-generation) → +28%, dù heap thật sau GC đứng yên 4.4–4.7 MB và RSS đứng yên từ Đêm 10 tới Đêm 30. `soak_cmd` vì vậy chạy Node với `--no-opt --max-semi-space-size=1` (+12%, đứng yên tới 50 Đêm). Không đổi luật hay output; rò rỉ thật vẫn lộ |
 | D7 | Input ngẫu nhiên soak | Đêm i (0-based) là Đêm `(i mod 3) + 1`, seed `seed + i`; input từ mulberry32(seed ^ 0xdeadbeef); mỗi 30 tick đổi hướng; mỗi tick: 5% nhảy, 3% lướt, 2% tỏa sáng, 10% tương tác. Chạy tới khi hết Đêm (thắng/thua) hoặc quá thời lượng + 10 s. Input ngẫu nhiên gần như luôn thua sớm (rơi khỏi đảo / bị Bóng Mực chạm): soak đo độ ổn định và rò rỉ bộ nhớ, không đo khả năng thắng |
 | D8 | "phát hiện trùng phím" | Nếu gán phím K cho B trong khi A đang dùng K: **đổi chỗ** (A nhận phím cũ của B) và hiện cảnh báo "Phím K đang dùng cho [A]. Đã đổi chỗ…". _(Đã đổi khi làm: ban đầu ghi đè, nhưng như vậy hai hành động dùng chung một phím.)_ |
 | D9 | Leaderboard khi thua ở bất kỳ Đêm nào | Hiển thị form nhập tên SAU màn hình result (thua) và SAU màn hình dawn (thắng Đêm 3). Không hiển thị khi thắng Đêm 1 hoặc 2 (game tiếp tục) |
 | D10 | Seed trong leaderboard entry | Seed là seed của Sim game (Date.now() >>> 0 % 1000000, giống logic hiện tại) |
-| D11 | "Bóng Mực xuất hiện" indicator | Khi nhận event `shade_spawned`, flash mũi tên đỏ ở cạnh màn hình chỉ về phía shade đó trong 2 giây |
+| D11 | Phụ đề / chỉ báo hình ảnh | Dòng phụ đề giữa trên màn hình cho: Bóng Mực xuất hiện (3 s, kèm mũi tên đỏ ở mép màn hình chỉ hướng trong 2 s), gió sắp thổi (suốt lúc báo trước), 10 giây cuối (đếm ngược), đèn sắp cạn dầu (3 s khi fuel vừa xuống dưới 30; thanh dầu nhấp nháy từ Phase 3). _(Bổ sung khi kiểm lại: bản đầu chỉ có mũi tên Bóng Mực; gió và 10 s cuối chỉ có âm thanh.)_ Game không có rung camera nên "giảm chuyển động" chỉ cần tắt chớp màn hình |
+| D15 | Bench: Mây | Mây hiển thị, đứng yên ở (0,0,0). _(Đã đổi khi kiểm lại: bản đầu ẩn Mây.)_ |
 | D12 | bench.mjs viết bench.json ở đâu | Viết vào đường dẫn `--out` (mặc định `bench.json` tại thư mục hiện tại). Bằng chứng commit ở `docs/proof/phase-4/bench.json` (sinh bằng lệnh, không sửa tay) |
 | D13 | Font tối thiểu 18 px | Áp cho chữ nội dung: thẻ menu/cài đặt/bảng xếp hạng, gợi ý, Bùa Gió, HUD góc phải. Ngoại lệ: nhãn nhỏ dưới icon hồi chiêu (Lướt/Tỏa Sáng) và bộ đếm FPS (công cụ debug). "Chữ lớn" phóng ×1.25 toàn bộ thẻ và HUD |
-| D14 | Leaderboard: điểm khi thua | Điểm lưu = tổng điểm các Đêm đã thắng + điểm của Đêm đang thua; `nights_won` = số Đêm đã thắng. Tên: 3–12 ký tự `A-Z a-z 0-9 _`. Top 10, cùng điểm thì ai đạt trước xếp trên |
+| D14 | Leaderboard: điểm khi thua | Điểm lưu = tổng điểm các Đêm đã thắng (đúng chữ ticket; Đêm đang thua không tính). _(Đã đổi khi kiểm lại: bản đầu cộng cả điểm Đêm đang thua.)_ `nights_won` = số Đêm đã thắng. Tên: 3–12 ký tự `A-Z a-z 0-9 _`. Top 10, cùng điểm thì ai đạt trước xếp trên |
 
 ## Tiêu chí nghiệm thu
 
@@ -51,14 +52,14 @@
 
 | Mục | Kết quả | Ngưỡng | Bằng chứng |
 |---|---|---|---|
-| Bench 30 s, seed 42, 1280×720 | avg **115.4** FPS, 1% low **65.1**, p95 11.8 ms, load **1158** ms, heap 15.4 MB | ≥ 60 / ≥ 30 / ≤ 10000 ms | [bench.json](../proof/phase-4/bench.json) |
-| Soak 10 Đêm, seed 7 | 0 crash, RSS 44.7 → 46.3 MB (+3.6%) | 0 crash, ≤ +20% | [soak.json](../proof/phase-4/soak.json) |
+| Bench 30 s, seed 42, 1280×720 | avg **110.8** FPS, 1% low **63.3**, p95 12.6 ms, load **1427** ms, `peak_mem_mb` null (JS heap 14.5 MB) | ≥ 60 / ≥ 30 / ≤ 10000 ms | [bench.json](../proof/phase-4/bench.json) |
+| Soak 10 Đêm, seed 7 | 0 crash, RSS 35.9 → 40.3 MB (+12%), 0.3 s | 0 crash, ≤ +20% | [soak.json](../proof/phase-4/soak.json) |
 | Regress | 80 test (79 cũ + soak) + 42 scenario đạt | tất cả đạt | `npm test`, [phase-3 report](../proof/phase-3/report.md) |
 
 Ghi chú đo:
 - Trước khi tối ưu, bench đạt avg ~60 FPS, 1% low ~19–28. Hai nguyên nhân: (1) mỗi Bóng Mực là 7 mesh có geometry riêng → ~1.400 draw call với 200 con; gộp còn 3 mesh dùng chung geometry; (2) bench.mjs poll trang qua CDP làm khựng khung hình; chuyển sang chờ trong trang.
 - Lỗi tự phát hiện: p95 ban đầu tính trên mảng đã sắp **giảm dần** nên thực chất là p5 (ra 0.4 ms, vô lý). Đã sửa.
-- Lần chạy đầu sau khi build thường thấp hơn hẳn (một lần ra 38 FPS) do máy chưa "nóng"; các lần sau ổn định 103–115 FPS.
+- Lần chạy đầu sau khi build thường thấp hơn hẳn (một lần ra 38 FPS; lần đo lại cuối: avg 94.6, 1% low 28.6, dưới ngưỡng) do máy chưa "nóng"; các lần sau ổn định 103–115 FPS, 1% low 54–67. Bằng chứng là lần chạy thứ 3 liên tiếp.
 - Thử bỏ `preserveDrawingBuffer` để tăng FPS: ảnh chụp headless bị trống → giữ nguyên; bench đo đúng cấu hình người chơi dùng.
 
 ## Test bị ảnh hưởng bởi v1.3
@@ -67,5 +68,5 @@ Ghi chú đo:
 |---|---|
 | `contract v1.2` → `contract v1.3` | contract_version đổi sang "1.3" |
 | `game.contract.json tuning` | Thêm bench_cmd, soak_cmd vào file và test kiểm tra hai lệnh này; test tuning không đổi |
-| Mới: `soak_cmd (Ticket-04)` trong `tests/cli.test.ts` | Chạy `soak_cmd` 3 Đêm: thoát 0, đúng 5 khóa, 0 crash, mem_end ≤ 1.2 × mem_start |
+| Mới: `soak_cmd (Ticket-04)` trong `tests/cli.test.ts` | Chạy `soak_cmd` 3 Đêm: thoát 0, đúng 6 khóa (có `duration_s`), 0 crash, mem_end ≤ 1.2 × mem_start |
 | Không spec headless nào đổi | Phase 4 không đổi luật mô phỏng; output headless giữ nguyên (verify sinh lại không có khác biệt) |
