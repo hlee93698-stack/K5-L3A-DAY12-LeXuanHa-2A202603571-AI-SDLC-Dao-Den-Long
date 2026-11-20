@@ -69,3 +69,24 @@ Công cụ: **Claude Code** (VS Code extension), model Claude Opus. Harness: [AG
 | Lệnh `node -e "..."` chứa backtick trong bash bị shell hiểu sai | Lỗi cú pháp, không file nào bị ghi | Ghi file bằng công cụ sửa file |
 
 **Token (ước tính):** ~120–150k cho Phase 3. _(Cập nhật số thật từ `/cost`.)_
+
+## Phase 4
+
+**Lời nhắc chính:** dán Ticket-04 "Bình minh: phát hành v1.0.0" kèm "Làm tiếp ph4 cho xong đi". Ràng buộc người dùng đặt từ trước: không push, không gắn tag (người tự gắn). Model: Claude Sonnet 4.6 phần đầu, Claude Opus 5.5 phần cuối (sau khi nén ngữ cảnh).
+
+**Cách làm:** viết ADR-004 và 12 giả định trong `docs/notes/phase-4.md` trước khi code. Soak chạy thuần Node (dùng lại `Sim`), bench chạy trong Chrome thật vì cần đo render. Mọi thứ thêm vào chỉ ở `src/web/`, `scripts/` và cờ `--soak` nên output headless không đổi. Kiểm thử UI bằng script puppeteer tạm (đổi phím, trùng phím, khôi phục, chữ lớn, nhập tên sai/đúng, bảng xếp hạng, POST xấu bị từ chối 400) rồi xem ảnh chụp.
+
+| Lỗi của AI | Phát hiện | Xử lý |
+|---|---|---|
+| p95 tính trên mảng sắp giảm dần nên thực ra là p5 (ra 0.4 ms) | Con số vô lý với cảnh 200 Bóng Mực | Lấy phần tử ở 5% đầu mảng giảm dần |
+| Bench.mjs gọi `page.metrics()` và `waitForFunction` liên tục qua CDP, làm khựng khung hình, kéo 1% low xuống ~19 | Kết quả dao động mạnh, 1% low tăng khi giãn nhịp poll | Chờ và đo heap ngay trong trang, không gọi CDP khi đang đo |
+| Bỏ `preserveDrawingBuffer` để tăng FPS làm ảnh chụp headless bị trống | Xem lại ảnh `night1-hud` | Giữ lại; bench đo đúng cấu hình người chơi dùng |
+| Trùng phím: thiết kế đầu ghi đè nên hai hành động dùng chung phím | Script kiểm thử in ra bindings sau khi gán | Đổi sang đổi chỗ phím, cập nhật D8 |
+| Cờ chữ lớn đặt `font-size` cho `:root` nhưng CSS dùng px nên không có tác dụng | Đọc lại CSS | Dùng class `body.large` + `zoom: 1.25` |
+| Gõ một lệnh bash có `cat > file` không có input nên treo 2 phút (lặp lại lỗi Phase 2 dù AGENTS.md đã cấm) | Lệnh bị timeout | Dừng task. Bài học: quy tắc trong AGENTS.md chưa đủ, cần hook chặn lệnh chờ stdin |
+| Tắt server cũ bằng TaskStop nhưng tiến trình node con vẫn giữ cổng 5173 | `EADDRINUSE` khi khởi động lại | Tìm PID theo cổng rồi dừng đúng tiến trình đó |
+| README còn mô tả luật Phase 2 (thắng khi thắp hết đèn, điểm cũ) suốt Phase 3 | Rà README khi thêm mục Phase 4 | Viết lại theo luật Phase 3, kiểm tra luật hút dầu trong `sim.ts` trước khi ghi |
+
+**Token (ước tính):** ~250–300k cho Phase 4 (gồm phần thiết kế lại nhân vật/môi trường trước đó và một lần nén ngữ cảnh). _(Cập nhật số thật từ `/cost`.)_
+
+**Cách tiết kiệm:** kiểm thử UI bằng một script chạy một lần thay vì nhiều lần chụp ảnh lẻ; chạy bench 10–15 s khi dò lỗi, chỉ chạy bản 30 s cho bằng chứng; không dùng subagent.

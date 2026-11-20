@@ -6,7 +6,20 @@ Mỗi phase là một phiên bản. Muốn xem lại đúng code của phiên b�
 |---|---|---|---|---|
 | Phase 1 | 1.0 | `71d2446` | `phase-1` | [docs/notes/phase-1.md](docs/notes/phase-1.md) |
 | Phase 2 | 1.1 | `868ed9c` | `phase-2` | [docs/notes/phase-2.md](docs/notes/phase-2.md) |
-| Phase 3 | 1.2 | commit "Phase 3 docs" (xem `git log`) | `phase-3` | [docs/notes/phase-3.md](docs/notes/phase-3.md) (có ADR-003) |
+| Phase 3 | 1.2 | `fe9372c` | `phase-3` | [docs/notes/phase-3.md](docs/notes/phase-3.md) (có ADR-003) |
+| Phase 4 = **v1.0.0** | 1.3 | commit "Phase 4 docs" (xem `git log`) | `phase-4` + Release `v1.0.0` | [docs/notes/phase-4.md](docs/notes/phase-4.md) (có ADR-004), [retro](docs/notes/retro.md) |
+
+## Phase 4 / v1.0.0 (contract 1.3) — KHÔNG breaking với 1.2
+
+Luật mô phỏng và output headless giữ nguyên (mọi scenario cũ vẫn đạt, `verify` sinh lại không khác). Chỉ thêm:
+
+- **Contract:** `contract_version` 1.3, thêm `bench_cmd` (`node scripts/bench.mjs`) và `soak_cmd` (`node dist/headless.cjs --soak`).
+- **Bench:** cảnh `?bench=1` (Đêm 1, 200 Bóng Mực, 100 đom đóm, 3 đèn sáng, camera bay vòng), ghi `bench.json`.
+- **Soak:** cờ `--soak --seed --nights --out` cho lệnh headless, ghi `soak.json`.
+- **Bảng xếp hạng:** nhập tên sau khi thua/Bình Minh, xem từ menu, top 10; `data/leaderboard.json` qua `/api/leaderboard`; xuất bằng `npm start -- --export-leaderboard out.json`.
+- **Trợ năng:** đổi phím (đổi chỗ khi trùng, khôi phục mặc định), giảm chuyển động, chữ lớn ×1.25, chữ nội dung ≥ 18 px, mũi tên báo Bóng Mực mới xuất hiện.
+- **Hiệu năng:** Bóng Mực gộp từ 7 mesh còn 3 mesh dùng chung geometry.
+- **Hình ảnh** (trước Phase 4, commit `7e18051`, `6af8913`): Mây theo phong cách chibi tóc trắng bịt mắt, Bóng Mực hình giọt mực, Gió Lạc dạng xoáy, cây dừa, lan can cầu tre, đèn treo trên tháp. Chỉ ở `src/web/`.
 
 ## Phase 3 (contract 1.2) — BREAKING so với 1.1
 
