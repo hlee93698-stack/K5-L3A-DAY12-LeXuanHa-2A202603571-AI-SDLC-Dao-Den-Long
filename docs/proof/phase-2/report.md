@@ -7,25 +7,25 @@
 
 | ID | Requirement | Result | Output sha256 |
 |---|---|---|---|
-| P2-01 | Dash: 14 m/s for 12 ticks (2.8 m) in move direction; cooldown 90 ticks from dash start | PASS | `7d89edbcfab449c5` |
-| P2-02 | Standing dash uses facing; dash in the air keeps altitude (y frozen for 12 ticks) | PASS | `617e9af43aeb6ad1` |
-| P2-03 | Falling off the island (Y < -10): player_hit by fall, -1 flame, lose all motes; respawn at start after 60 ticks with 90 ticks invulnerability | PASS | `a1d0e245a6933407` |
-| P2-04 | Hit drops floor(6/2)=3 motes of kind "dropped" in the 1.5-2.5 m ring around Mây, ttl 480 ticks | PASS | `56e53fe4ae77304b` |
-| P2-05 | Dropped motes can be picked up again; they disappear when ttl runs out | PASS | `22b7a1f4ac932455` |
-| P2-06 | Shade states: chase within 12 m, wander beyond; spawning -> wander; hit -> recoil 2 m over 60 ticks -> chase | PASS | `dcaba7b7b73c76bd` |
-| P2-07 | Night 1 schedule: 20 motes at start, +1 at tick 240; shades S1+S2 at tick 300 (spawning 60 ticks), S3 at 780 | PASS | `87f780833904a780` |
-| P2-08 | Lighting a lantern evicts shades inside 6 m to the edge within 30 ticks without damage; then they are blocked at the edge | PASS | `a5d7d19d4997763c` |
-| P2-09 | Night 2: 6 lanterns; jump pad at (20,0,18) launches Mây (vy 14, 24 m/s) onto island B | PASS | `c63bc3e2883b1014` |
-| P2-10 | Night 2: the bamboo bridge (x 26..44, |z|<=2) is walkable; stepping off its side falls | PASS | `87646e0f5ebb23e6` |
-| P2-11 | Night 3: 7 lanterns; ramp at 30 deg climbs to tier 1 (Y=3); tier 2 cliff (r<=8) blocks | PASS | `35a10ccff8e620ad` |
-| P2-12 | Night 3 wind: gust at sim tick 1800 for 300 ticks pushes Mây 2 m/s (10 m total) | PASS | `48ed7d936a2df2f4` |
-| P2-13 | Drifter: idle -> chase when Mây carries >=5 within 15 m; steals min(3, n); flees 240 ticks then removed | PASS | `7e9480ead747f1b0` |
-| P2-14 | Pulse on a fleeing drifter drops all stolen motes (removed 120 ticks later); pulse on a chasing drifter makes it flee without stealing | PASS | `10ee26291c2ade82` |
-| P2-15 | Wind Charm C1 at (35,0,0): pickup -> 600 ticks, run 7.2 m/s, respawn after 2700 ticks | PASS | `64289c6e7a9b0f2c` |
-| P2-16 | With the charm, dash has no cooldown (re-press needed; press during a dash is ignored); charm respawns when its timer ends | PASS | `ca2fdc16c1c44380` |
-| P2-17 | Pause: tick advances but sim_tick, time and movement freeze; snapshot state "paused"; events paused/resumed | PASS | `8d153e9f39c7f371` |
-| P2-18 | Win/lose evaluated after the tick: lighting the last lantern on the tick time runs out is a win | PASS | `13816be2b46084a3` |
-| P2-19 | Night 3 full length (21600 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts) | PASS | `3b77cca5bf64a9b2` |
+| P2-01 | Dash: 14 m/s for 12 ticks (2.8 m) in move direction; cooldown 90 ticks from dash start | PASS | `edac159716a51eea` |
+| P2-02 | Standing dash uses facing; dash in the air keeps altitude (y frozen for 12 ticks) | PASS | `93ed141cae305385` |
+| P2-03 | Falling off the island (Y < -10): player_hit by fall, -1 flame, lose all motes; respawn at start after 60 ticks with 90 ticks invulnerability | PASS | `cfc1e0d778821d89` |
+| P2-04 | Hit drops floor(6/2)=3 motes of kind "dropped" in the 1.5-2.5 m ring around Mây, ttl 480 ticks | PASS | `210a18e9670861a3` |
+| P2-05 | Dropped motes can be picked up again; they disappear when ttl runs out | PASS | `4bd7b081e0060479` |
+| P2-06 | Shade states: chase within 12 m, wander beyond; spawning -> wander; hit -> recoil 2 m over 60 ticks -> chase | PASS | `56c8f5ecdaf5978e` |
+| P2-07 | Night 1 schedule: 20 motes at start, +1 at tick 240; shades S1+S2 at tick 300 (spawning 60 ticks), S3 at 780 | PASS | `5ebf87223e76fcbb` |
+| P2-08 | Lighting a lantern evicts shades inside 6 m to the edge within 30 ticks without damage; then they are blocked at the edge | PASS | `53a8e162c8e0830d` |
+| P2-09 | Night 2: 6 lanterns; jump pad at (20,0,18) launches Mây (vy 14, 24 m/s) onto island B | PASS | `47691377bb7fd403` |
+| P2-10 | Night 2: the bamboo bridge (x 26..44, |z|<=2) is walkable; stepping off its side falls | PASS | `ea8f884e13fcf949` |
+| P2-11 | Night 3: 7 lanterns; ramp at 30 deg climbs to tier 1 (Y=3); tier 2 cliff (r<=8) blocks | PASS | `101d266a8d454618` |
+| P2-12 | Night 3 wind: gust at sim tick 1800 for 300 ticks pushes Mây 2 m/s (10 m total) | PASS | `873d6759cc16c889` |
+| P2-13 | Drifter: idle -> chase when Mây carries >=5 within 15 m; steals min(3, n); flees 240 ticks then removed | PASS | `45d3a2096848d3a1` |
+| P2-14 | Pulse on a fleeing drifter drops all stolen motes (removed 120 ticks later); pulse on a chasing drifter makes it flee without stealing | PASS | `485baf9312db0e5b` |
+| P2-15 | Wind Charm C1 at (35,0,0): pickup -> 600 ticks, run 7.2 m/s, respawn after 2700 ticks | PASS | `b7d0032762120a06` |
+| P2-16 | With the charm, dash has no cooldown (re-press needed; press during a dash is ignored); charm respawns when its timer ends | PASS | `a86a6f1043f09cff` |
+| P2-17 | Pause: tick advances but sim_tick, time and movement freeze; snapshot state "paused"; events paused/resumed | PASS | `48d04d0329561c30` |
+| P2-18 | Win/lose evaluated after every update of the tick: lighting a lantern on the dawn tick counts; score 50 + 100 + 4x(50+99) + (50+100) + 150 = 1046 | PASS | `a6a0f5ab441f28b0` |
+| P2-19 | Night 3 full length (18000 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts) | PASS | `ea7955257b05a49b` |
 
 ## Details
 
@@ -156,7 +156,7 @@ Lighting a lantern evicts shades inside 6 m to the edge within 30 ticks without 
 node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-2/inputs/P2-08.scenario.json --inputs docs/proof/phase-2/inputs/P2-08.inputs.json --ticks 120 --out docs/proof/phase-2/runs/P2-08.jsonl --snapshot-every 1
 ```
 
-- [x] found {"type":"event","tick":1,"name":"lantern_lit","data":{"lantern_id":"L1"}}
+- [x] found {"type":"event","tick":1,"name":"lantern_lit","data":{"lantern_id":"L1","relight":false}}
 - [x] snapshot@30 shades.0.pos = [0,1,19] (want [0,1,19])
 - [x] no player_hit events
 - [x] min shade distance to (0, 25) over 91 snapshots from tick 30 = 6.000 (want >= 6)
@@ -304,7 +304,7 @@ node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-2/inputs/P
 - [x] snapshot@15 state = "paused" (want "paused")
 - [x] snapshot@15 sim_tick = 10 (want 10)
 - [x] snapshot@15 player.pos = [0,0,1] (want [0,0,1])
-- [x] snapshot@15 time_left_s = 299.833 (want 299.833)
+- [x] snapshot@15 time_left_s = 239.833 (want 239.833)
 - [x] snapshot@30 state = "playing" (want "playing")
 - [x] snapshot@30 sim_tick = 20 (want 20)
 - [x] snapshot@30 player.pos = [0,0,2] (want [0,0,2])
@@ -312,26 +312,26 @@ node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-2/inputs/P
 
 ### P2-18: PASS
 
-Win/lose evaluated after the tick: lighting the last lantern on the tick time runs out is a win
+Win/lose evaluated after every update of the tick: lighting a lantern on the dawn tick counts; score 50 + 100 + 4x(50+99) + (50+100) + 150 = 1046
 
 ```
 node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-2/inputs/P2-18.scenario.json --inputs docs/proof/phase-2/inputs/P2-18.inputs.json --ticks 10 --out docs/proof/phase-2/runs/P2-18.jsonl --snapshot-every 10
 ```
 
-- [x] found {"type":"event","tick":3,"name":"game_over","data":{"result":"won","reason":"all_lit"}}
-- [x] end line {"type":"end","ticks":3,"state":"won","score":350}
+- [x] found {"type":"event","tick":3,"name":"game_over","data":{"result":"won","reason":"dawn_survived"}}
+- [x] end line {"type":"end","ticks":3,"state":"won","score":1046}
 - [x] run twice: identical output
 
 ### P2-19: PASS
 
-Night 3 full length (21600 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts)
+Night 3 full length (18000 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts)
 
 ```
 node dist/headless.cjs --seed 77 --night 3 --scenario docs/proof/phase-2/inputs/P2-19.scenario.json --ticks 21600 --out docs/proof/phase-2/runs/P2-19.jsonl --snapshot-every 3600
 ```
 
 - [x] exit code 0 (want 0)
-- [x] end line {"type":"end","ticks":21600,"state":"lost","score":0}
-- [x] found {"type":"event","tick":21600,"name":"game_over","data":{"result":"lost","reason":"dawn"}}
+- [x] end line {"type":"end","ticks":18000,"state":"lost","score":0}
+- [x] found {"type":"event","tick":18000,"name":"game_over","data":{"result":"lost","reason":"dawn"}}
 - [x] snapshot@0 charms.length = 2 (want 2)
 - [x] run twice: identical output

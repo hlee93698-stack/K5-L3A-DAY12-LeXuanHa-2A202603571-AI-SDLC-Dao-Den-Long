@@ -3,6 +3,7 @@
   "random_shades": false,
   "motes": [],
   "shades": [],
+  "time_left_s": 1,
   "player": {
     "pos": [
       -23.8,

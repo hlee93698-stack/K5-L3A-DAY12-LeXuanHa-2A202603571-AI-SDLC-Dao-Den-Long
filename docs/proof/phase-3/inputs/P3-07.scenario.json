@@ -1,0 +1,31 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [],
+  "shades": [
+    {
+      "pos": [
+        0,
+        0,
+        22
+      ],
+      "state": "stunned",
+      "state_ticks_left": 300
+    }
+  ],
+  "player": {
+    "pos": [
+      0,
+      0,
+      23
+    ],
+    "carried": 3
+  },
+  "lanterns": [
+    {
+      "id": "L1",
+      "lit": true,
+      "fuel": 20
+    }
+  ]
+}

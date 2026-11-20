@@ -7,22 +7,22 @@
 
 | ID | Requirement | Result | Output sha256 |
 |---|---|---|---|
-| P1-01 | Move [0,1] at yaw 0 for 1 s moves player_speed=6 m along +Z | PASS | `507f35e401f677bc` |
-| P1-02 | cam_yaw_deg rotates move (yaw 90: [0,1] -> +X); diagonal [1,1] is normalized to length 1 | PASS | `f5f92bfc5cf95124` |
-| P1-03 | Jump (edge-triggered) lifts player above Y=0 and lands back at Y=0 | PASS | `4176f70a5f03d20f` |
-| P1-04 | Motes within pickup_radius=1.0 (inclusive) are picked automatically; picking gives no score | PASS | `ffc89c8a6c708c8c` |
-| P1-05 | Interact within interact_radius=2 deposits; lantern_cost=10 lights it; score 10x10 + 100 = 200 | PASS | `d1bb03eb2478cce7` |
-| P1-06 | Lighting all 5 lanterns wins (all_lit); score = 100 + 100 + floor(299.98)*2 + 3*50 = 948 | PASS | `7fe5059602cf6b8a` |
-| P1-07 | Pulse (cost 3) stuns shades within 5 m for 120 ticks and pushes them 4 m over 15 ticks; +5 per shade | PASS | `348a332560fc0711` |
-| P1-08 | Pulse cooldown 3 s: pulse at tick 1; presses landing on ticks 61 and 179 are ignored; press landing on tick 181 fires | PASS | `87740ddef68a0b13` |
-| P1-09 | Shade contact: -1 flame, drop floor(carried/2), 90 ticks invulnerable; 0 flames -> lost (no_flames) | PASS | `ce2abb74957c322d` |
-| P1-10 | Shades never enter safe_radius=6 of a lit lantern; player sheltering there is not hit | PASS | `91b8bdf2a58b5347` |
-| P1-11 | time_left_s = duration - steps/60; reaching 0 loses (dawn) | PASS | `97b1a3ba590cfd96` |
-| P1-12 | Scenario setup emits no gameplay events and no score (pre-lit lantern, carried, flames, moved lantern) | PASS | `fd877418771c4df6` |
+| P1-01 | Move [0,1] at yaw 0 for 1 s moves player_speed=6 m along +Z | PASS | `d7ce190c80497a51` |
+| P1-02 | cam_yaw_deg rotates move (yaw 90: [0,1] -> +X); diagonal [1,1] is normalized to length 1 | PASS | `f8ddd6fc236f287c` |
+| P1-03 | Jump (edge-triggered) lifts player above Y=0 and lands back at Y=0 | PASS | `ccb0c85fa148e5c4` |
+| P1-04 | Motes within pickup_radius=1.0 (inclusive) are picked automatically; picking gives no score | PASS | `8363a0dcefe5fb47` |
+| P1-05 | Interact within interact_radius=2 deposits; lantern_cost=10 lights it; score 10x5 + 100 = 150 | PASS | `885deaedf76aa784` |
+| P1-06 | Lighting the 5th lantern does NOT end the night; at dawn (tick 60) 5/5 lit -> won dawn_survived; score 50 + 100 + 5x(50+99) + 3x50 = 1045 | PASS | `67604252824e6fd8` |
+| P1-07 | Pulse (cost 3) stuns shades within 5 m for 120 ticks and pushes them 4 m over 15 ticks; +5 per shade | PASS | `91ec5c2bea4ab57e` |
+| P1-08 | Pulse cooldown 3 s: pulse at tick 1; presses landing on ticks 61 and 179 are ignored; press landing on tick 181 fires | PASS | `e7b7cf8e17965383` |
+| P1-09 | Shade contact: -1 flame, drop floor(carried/2), 90 ticks invulnerable; 0 flames -> lost (no_flames) | PASS | `5a254b3539d133e4` |
+| P1-10 | Shades never enter safe_radius=6 of a lit lantern; player sheltering there is not hit | PASS | `88e4b8d80d6fe673` |
+| P1-11 | time_left_s = duration - steps/60; reaching 0 loses (dawn) | PASS | `35d29b2eb3876a4c` |
+| P1-12 | Scenario setup emits no gameplay events and no score (pre-lit lantern, carried, flames, moved lantern) | PASS | `fc7d13949416eff7` |
 | P1-13 | Malformed inputs file (ticks not strictly increasing) -> exit code 2 | PASS | `e3b0c44298fc1c14` |
 | P1-14 | Malformed scenario file (unknown lantern id) -> exit code 2 | PASS | `e3b0c44298fc1c14` |
-| P1-15 | Inclusive radius: deposit at exactly interact_radius=2; no pickup while carry_capacity=10 is full; pickup happens before interact in a tick | PASS | `04c5ac6555eeef2a` |
-| P1-16 | Default Night 1 (20 motes on standard points, no shades at start) runs a full night deterministically | PASS | `a0112dbc2982d3ef` |
+| P1-15 | Inclusive radius: deposit at exactly interact_radius=2; no pickup while carry_capacity=10 is full; pickup happens before interact in a tick | PASS | `03d40e0751b48fa3` |
+| P1-16 | Default Night 1 (20 motes on standard points, no shades at start) runs a full night deterministically | PASS | `4eeace6024e3c80f` |
 
 ## Details
 
@@ -78,30 +78,31 @@ node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-1/inputs/P
 
 ### P1-05: PASS
 
-Interact within interact_radius=2 deposits; lantern_cost=10 lights it; score 10x10 + 100 = 200
+Interact within interact_radius=2 deposits; lantern_cost=10 lights it; score 10x5 + 100 = 150
 
 ```
 node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-1/inputs/P1-05.scenario.json --inputs docs/proof/phase-1/inputs/P1-05.inputs.json --ticks 10 --out docs/proof/phase-1/runs/P1-05.jsonl --snapshot-every 10
 ```
 
 - [x] found {"type":"event","tick":1,"name":"deposit","data":{"lantern_id":"L1","amount":10,"deposited":10}}
-- [x] found {"type":"event","tick":1,"name":"lantern_lit","data":{"lantern_id":"L1"}}
+- [x] found {"type":"event","tick":1,"name":"lantern_lit","data":{"lantern_id":"L1","relight":false}}
 - [x] snapshot@10 lanterns.0.lit = true (want true)
 - [x] snapshot@10 player.carried = 0 (want 0)
-- [x] snapshot@10 score = 200 (want 200)
+- [x] snapshot@10 score = 150 (want 150)
 - [x] run twice: identical output
 
 ### P1-06: PASS
 
-Lighting all 5 lanterns wins (all_lit); score = 100 + 100 + floor(299.98)*2 + 3*50 = 948
+Lighting the 5th lantern does NOT end the night; at dawn (tick 60) 5/5 lit -> won dawn_survived; score 50 + 100 + 5x(50+99) + 3x50 = 1045
 
 ```
 node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-1/inputs/P1-06.scenario.json --inputs docs/proof/phase-1/inputs/P1-06.inputs.json --ticks 100 --out docs/proof/phase-1/runs/P1-06.jsonl --snapshot-every 10
 ```
 
-- [x] found {"type":"event","tick":1,"name":"lantern_lit","data":{"lantern_id":"L5"}}
-- [x] found {"type":"event","tick":1,"name":"game_over","data":{"result":"won","reason":"all_lit"}}
-- [x] end line {"type":"end","ticks":1,"state":"won","score":948}
+- [x] found {"type":"event","tick":1,"name":"lantern_lit","data":{"lantern_id":"L5","relight":false}}
+- [x] found {"type":"event","tick":60,"name":"game_over","data":{"result":"won","reason":"dawn_survived"}}
+- [x] 1 x game_over (want 1)
+- [x] end line {"type":"end","ticks":60,"state":"won","score":1045}
 - [x] run twice: identical output
 
 ### P1-07: PASS
@@ -189,8 +190,8 @@ node dist/headless.cjs --seed 1 --night 1 --scenario docs/proof/phase-1/inputs/P
 - [x] snapshot@0 player.pos = [1,0,2] (want [1,0,2])
 - [x] snapshot@0 player.flames = 2 (want 2)
 - [x] snapshot@0 player.carried = 3 (want 3)
-- [x] snapshot@0 lanterns.0 = {"id":"L1","pos":[0,0,25],"lit":true,"deposited":10} (want {"id":"L1","pos":[0,0,25],"lit":true,"deposited":10})
-- [x] snapshot@0 lanterns.1 = {"id":"L2","pos":[5,0,5],"lit":false,"deposited":2} (want {"id":"L2","pos":[5,0,5],"lit":false,"deposited":2})
+- [x] snapshot@0 lanterns.0 = {"id":"L1","pos":[0,0,25],"lit":true,"deposited":10,"fuel":100,"ever_lit":true,"relit_count":0} (want {"id":"L1","pos":[0,0,25],"lit":true,"deposited":10,"fuel":100,"ever_lit":true,"relit_count":0})
+- [x] snapshot@0 lanterns.1 = {"id":"L2","pos":[5,0,5],"lit":false,"deposited":2,"fuel":0,"ever_lit":false,"relit_count":0} (want {"id":"L2","pos":[5,0,5],"lit":false,"deposited":2,"fuel":0,"ever_lit":false,"relit_count":0})
 - [x] no lantern_lit events
 - [x] no deposit events
 - [x] end line {"type":"end","ticks":10,"state":"playing","score":0}

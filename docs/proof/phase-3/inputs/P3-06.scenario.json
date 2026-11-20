@@ -1,0 +1,16 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [
+    [
+      0,
+      0,
+      0.5
+    ]
+  ],
+  "shades": [],
+  "player": {
+    "successful_lights": 7,
+    "carried": 20
+  }
+}
