@@ -1,7 +1,7 @@
 {
   "id": "P1-06",
-  "changed": "standard L5 position (-23.8,0,7.7), cost 10, score per deposit",
-  "requirement": "Lighting all 5 lanterns wins (all_lit); score = 100 + 100 + floor(299.98)*2 + 3*50 = 948",
+  "changed": "P3 [THAY THẾ]: no early win; win = alive at dawn with >= 3/5 lit (dawn_survived), new score",
+  "requirement": "Lighting the 5th lantern does NOT end the night; at dawn (tick 60) 5/5 lit -> won dawn_survived; score 50 + 100 + 5x(50+99) + 3x50 = 1045",
   "seed": 1,
   "ticks": 100,
   "scenario": {
@@ -9,6 +9,7 @@
     "random_shades": false,
     "motes": [],
     "shades": [],
+    "time_left_s": 1,
     "player": {
       "pos": [
         -23.8,
@@ -49,23 +50,28 @@
       "event": "lantern_lit",
       "tick": 1,
       "data": {
-        "lantern_id": "L5"
+        "lantern_id": "L5",
+        "relight": false
       }
     },
     {
       "event": "game_over",
-      "tick": 1,
+      "tick": 60,
       "data": {
         "result": "won",
-        "reason": "all_lit"
+        "reason": "dawn_survived"
       }
+    },
+    {
+      "event": "game_over",
+      "count": 1
     },
     {
       "end": {
         "type": "end",
-        "ticks": 1,
+        "ticks": 60,
         "state": "won",
-        "score": 948
+        "score": 1045
       }
     }
   ]

@@ -1,0 +1,104 @@
+{
+  "id": "P3-01",
+  "requirement": "Lit lantern loses 1 fuel/s; at 0 it goes out (lantern_out, deposited 0, ever_lit stays); relight costs 5 motes, +5 each +40, relit_count 1, capacity 12",
+  "seed": 1,
+  "ticks": 70,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "player": {
+      "pos": [
+        0,
+        0,
+        23
+      ],
+      "carried": 5
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true,
+        "fuel": 1
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 61,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 30,
+      "path": "lanterns.0.fuel",
+      "equals": 0.5
+    },
+    {
+      "event": "lantern_out",
+      "tick": 60,
+      "data": {
+        "lantern_id": "L1"
+      }
+    },
+    {
+      "snapshot": 60,
+      "path": "lanterns.0",
+      "equals": {
+        "id": "L1",
+        "pos": [
+          0,
+          0,
+          25
+        ],
+        "lit": false,
+        "deposited": 0,
+        "fuel": 0,
+        "ever_lit": true,
+        "relit_count": 0
+      }
+    },
+    {
+      "event": "deposit",
+      "tick": 62,
+      "data": {
+        "lantern_id": "L1",
+        "amount": 5,
+        "deposited": 5
+      }
+    },
+    {
+      "event": "lantern_lit",
+      "tick": 62,
+      "data": {
+        "lantern_id": "L1",
+        "relight": true
+      }
+    },
+    {
+      "snapshot": 62,
+      "path": "lanterns.0.fuel",
+      "equals": 100
+    },
+    {
+      "snapshot": 62,
+      "path": "lanterns.0.relit_count",
+      "equals": 1
+    },
+    {
+      "snapshot": 62,
+      "path": "score",
+      "equals": 65
+    },
+    {
+      "snapshot": 62,
+      "path": "player.capacity",
+      "equals": 12
+    }
+  ]
+}

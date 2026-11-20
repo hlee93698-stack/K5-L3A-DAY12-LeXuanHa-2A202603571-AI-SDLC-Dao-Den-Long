@@ -1,0 +1,73 @@
+{
+  "id": "P3-04",
+  "requirement": "Pulse on a draining shade scores 15 (instead of 5) and stuns it",
+  "seed": 1,
+  "ticks": 5,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          0,
+          0,
+          23.5
+        ],
+        "state": "drain",
+        "target_lantern_id": "L1"
+      }
+    ],
+    "player": {
+      "pos": [
+        0,
+        0,
+        19
+      ],
+      "carried": 3
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true,
+        "fuel": 20
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "pulse": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "shades.0.state",
+      "equals": "drain"
+    },
+    {
+      "event": "pulse",
+      "tick": 1,
+      "data": {
+        "stunned_ids": [
+          "S1"
+        ]
+      }
+    },
+    {
+      "snapshot": 1,
+      "path": "score",
+      "equals": 15
+    },
+    {
+      "snapshot": 1,
+      "path": "shades.0.state",
+      "equals": "stunned"
+    }
+  ]
+}

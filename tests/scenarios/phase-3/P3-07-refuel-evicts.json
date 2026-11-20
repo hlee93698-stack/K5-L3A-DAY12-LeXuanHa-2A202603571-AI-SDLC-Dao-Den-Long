@@ -1,0 +1,74 @@
+{
+  "id": "P3-07",
+  "requirement": "Refuelling a low lantern back to >= 30 evicts shades inside 6 m to the edge within 30 ticks",
+  "seed": 1,
+  "ticks": 40,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "pos": [
+          0,
+          0,
+          22
+        ],
+        "state": "stunned",
+        "state_ticks_left": 300
+      }
+    ],
+    "player": {
+      "pos": [
+        0,
+        0,
+        23
+      ],
+      "carried": 3
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true,
+        "fuel": 20
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "refuel",
+      "tick": 1,
+      "data": {
+        "lantern_id": "L1",
+        "amount": 3,
+        "fuel": 50
+      }
+    },
+    {
+      "snapshot": 30,
+      "path": "shades.0.pos",
+      "equals": [
+        0,
+        1,
+        19
+      ]
+    },
+    {
+      "shade_clear_of": [
+        0,
+        25
+      ],
+      "r": 6,
+      "from_tick": 30
+    }
+  ]
+}

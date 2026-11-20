@@ -1,6 +1,6 @@
 {
   "id": "P1-12",
-  "changed": "pre-lit lantern deposited = 10; player snapshot has more fields in v1.1",
+  "changed": "P2: deposited 10, more player fields. P3: lanterns carry fuel/ever_lit/relit_count",
   "requirement": "Scenario setup emits no gameplay events and no score (pre-lit lantern, carried, flames, moved lantern)",
   "seed": 1,
   "ticks": 10,
@@ -70,7 +70,10 @@
           25
         ],
         "lit": true,
-        "deposited": 10
+        "deposited": 10,
+        "fuel": 100,
+        "ever_lit": true,
+        "relit_count": 0
       }
     },
     {
@@ -84,7 +87,10 @@
           5
         ],
         "lit": false,
-        "deposited": 2
+        "deposited": 2,
+        "fuel": 0,
+        "ever_lit": false,
+        "relit_count": 0
       }
     },
     {

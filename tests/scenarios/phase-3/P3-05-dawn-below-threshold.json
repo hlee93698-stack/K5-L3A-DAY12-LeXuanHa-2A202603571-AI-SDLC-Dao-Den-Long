@@ -1,0 +1,40 @@
+{
+  "id": "P3-05",
+  "requirement": "Dawn with only 2/5 lanterns lit (< ceil(0.6*5)=3) -> lost dawn",
+  "seed": 1,
+  "ticks": 100,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "time_left_s": 1,
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true
+      },
+      {
+        "id": "L2",
+        "lit": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "game_over",
+      "tick": 60,
+      "data": {
+        "result": "lost",
+        "reason": "dawn"
+      }
+    },
+    {
+      "end": {
+        "ticks": 60,
+        "state": "lost",
+        "score": 0
+      }
+    }
+  ]
+}

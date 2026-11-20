@@ -1,0 +1,77 @@
+{
+  "id": "P3-02",
+  "requirement": "Refuel a lit lantern: used = min(carried, ceil((100 - fuel)/10)), fuel = min(100, fuel + 10*used), +5 per mote",
+  "seed": 1,
+  "ticks": 5,
+  "snapshot_every": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [],
+    "player": {
+      "pos": [
+        0,
+        0,
+        23
+      ],
+      "carried": 10
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true,
+        "fuel": 50
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "interact": true
+      },
+      {
+        "tick": 1,
+        "interact": false
+      },
+      {
+        "tick": 2,
+        "interact": true
+      }
+    ]
+  },
+  "expect": [
+    {
+      "event": "refuel",
+      "tick": 1,
+      "data": {
+        "lantern_id": "L1",
+        "amount": 6,
+        "fuel": 100
+      }
+    },
+    {
+      "event": "refuel",
+      "tick": 3,
+      "data": {
+        "lantern_id": "L1",
+        "amount": 1,
+        "fuel": 100
+      }
+    },
+    {
+      "snapshot": 3,
+      "path": "player.carried",
+      "equals": 3
+    },
+    {
+      "snapshot": 3,
+      "path": "score",
+      "equals": 35
+    },
+    {
+      "no_event": "lantern_lit"
+    }
+  ]
+}

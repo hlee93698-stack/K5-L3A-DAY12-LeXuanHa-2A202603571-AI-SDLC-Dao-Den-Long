@@ -1,0 +1,32 @@
+{
+  "id": "P3-06",
+  "requirement": "Capacity = 10 + 2 x successful_lights, max 20 (pickup stops at capacity)",
+  "seed": 1,
+  "ticks": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [
+      [
+        0,
+        0,
+        0.5
+      ]
+    ],
+    "shades": [],
+    "player": {
+      "successful_lights": 7,
+      "carried": 20
+    }
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "player.capacity",
+      "equals": 20
+    },
+    {
+      "no_event": "mote_picked"
+    }
+  ]
+}

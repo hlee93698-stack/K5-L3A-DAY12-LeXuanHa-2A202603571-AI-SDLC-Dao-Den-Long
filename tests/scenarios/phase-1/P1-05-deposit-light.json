@@ -1,7 +1,7 @@
 {
   "id": "P1-05",
-  "changed": "lantern_cost 5 -> 10; +10 per deposited mote",
-  "requirement": "Interact within interact_radius=2 deposits; lantern_cost=10 lights it; score 10x10 + 100 = 200",
+  "changed": "P2: lantern_cost 10. P3: +5 per deposited mote -> 150",
+  "requirement": "Interact within interact_radius=2 deposits; lantern_cost=10 lights it; score 10x5 + 100 = 150",
   "seed": 1,
   "ticks": 10,
   "scenario": {
@@ -56,7 +56,7 @@
     {
       "snapshot": 10,
       "path": "score",
-      "equals": 200
+      "equals": 150
     }
   ]
 }

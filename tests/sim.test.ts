@@ -19,18 +19,20 @@ function run(sim: Sim, n: number, input: InputState = inp()): GameEvent[] {
 const names = (evs: GameEvent[]) => evs.map((e) => e.name);
 const near = (a: number, b: number, eps = 1e-6) => expect(Math.abs(a - b)).toBeLessThan(eps);
 
-describe('contract v1.1', () => {
+describe('contract v1.2', () => {
   it('game.contract.json tuning equals the standard numbers the game uses', () => {
     const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-    expect(c.contract_version).toBe('1.1');
+    expect(c.contract_version).toBe('1.2'); // Ticket-03
     expect(c.tuning).toEqual(TUNING);
   });
   it('standard numbers from Ticket-02', () => {
     expect([T.player_speed, T.carry_capacity, T.lantern_cost, T.pickup_radius, T.interact_radius]).toEqual([6, 10, 10, 1, 2]);
     expect([T.pulse_cost, T.pulse_radius, T.pulse_cooldown_s, T.pulse_stun_s * 60, T.pulse_push_m]).toEqual([3, 5, 3, 120, 4]);
     expect([T.dash_speed, T.dash_duration_s, T.dash_cooldown_s]).toEqual([14, 0.2, 1.5]);
-    expect([T.night1_duration_s, T.night2_duration_s, T.night3_duration_s]).toEqual([300, 330, 360]);
-    expect(T.score).toEqual({ per_mote: 10, per_lantern: 100, per_stun: 5, per_second_left: 2, per_flame_left: 50 });
+    // Ticket-03 [THAY THẾ]: nights 240/270/300 s, new score, fuel numbers
+    expect([T.night1_duration_s, T.night2_duration_s, T.night3_duration_s]).toEqual([240, 270, 300]);
+    expect(T.score).toEqual({ per_mote: 5, per_lantern: 100, per_stun: 5, per_second_left: 0, per_flame_left: 50 });
+    expect([T.fuel_max, T.fuel_decay_per_s, T.fuel_per_mote, T.relight_cost, T.win_ratio, T.drain_per_s, T.low_fuel_threshold, T.capacity_max]).toEqual([100, 1, 10, 5, 0.6, 5, 30, 20]);
   });
   it('standard maps: lantern counts, spawn point counts, start positions', () => {
     expect(NIGHTS[1].lanterns.length).toBe(5);
@@ -140,6 +142,28 @@ describe('lanterns, hits, schedule', () => {
   });
   it('flames reset per night: every night starts with 3', () => {
     for (const night of [1, 2, 3]) expect(new Sim({ seed: 1, night }).player.flames).toBe(3);
+  });
+});
+
+describe('fuel (Ticket-03)', () => {
+  it('fuel is integer 1/60 units: exactly 6000 ticks from 100 to out, no float drift', () => {
+    const s = new Sim({ seed: 1, scenario: sc({ lanterns: [{ id: 'L1', lit: true }] }) });
+    run(s, 5999);
+    expect(s.lanterns[0].lit).toBe(true);
+    expect(names(s.step(inp()))).toEqual(['lantern_out']);
+  });
+  it('a full lantern is not selectable: interact picks the next eligible one', () => {
+    const s = new Sim({ seed: 1, scenario: sc({ player: { carried: 2 }, lanterns: [{ id: 'L1', pos: [1, 0, 0], lit: true, fuel: 100 }, { id: 'L2', pos: [-1.5, 0, 0] }] }) });
+    // after step-2 decay L1 is 99.983 -> still eligible (used = 1)
+    expect(s.step(inp({ interact: true }))[0]).toMatchObject({ name: 'refuel', data: { lantern_id: 'L1', amount: 1 } });
+  });
+  it('win needs ceil(0.6 n): 3/5, 4/6, 5/7', () => {
+    expect([1, 2, 3].map((n) => new Sim({ seed: 1, night: n }).winNeed)).toEqual([3, 4, 5]);
+  });
+  it('no flames at the dawn tick loses no_flames even with enough lanterns lit', () => {
+    const lit = ['L1', 'L2', 'L3'].map((id) => ({ id, lit: true }));
+    const s = new Sim({ seed: 1, scenario: sc({ time_left_s: 1 / 60, player: { flames: 1 }, lanterns: lit, shades: [{ pos: [0.5, 0, 0] }] }) });
+    expect(s.step(inp()).find((e) => e.name === 'game_over')!.data).toEqual({ result: 'lost', reason: 'no_flames' });
   });
 });
 

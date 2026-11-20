@@ -1,0 +1,64 @@
+{
+  "id": "P3-03",
+  "requirement": "A wandering shade walks to the lit lantern with fuel < 30, drains within 2 m (state drain, fuel_drain every 60 ticks) until it goes out, then wanders",
+  "seed": 1,
+  "ticks": 400,
+  "snapshot_every": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "motes": [],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          0,
+          0,
+          20
+        ]
+      }
+    ],
+    "lanterns": [
+      {
+        "id": "L1",
+        "lit": true,
+        "fuel": 20
+      }
+    ]
+  },
+  "expect": [
+    {
+      "snapshot": 0,
+      "path": "shades.0.state",
+      "equals": "wander"
+    },
+    {
+      "snapshot": 100,
+      "path": "shades.0.state",
+      "equals": "drain"
+    },
+    {
+      "event": "fuel_drain",
+      "data": {
+        "lantern_id": "L1",
+        "shade_id": "S1"
+      }
+    },
+    {
+      "event": "lantern_out",
+      "data": {
+        "lantern_id": "L1"
+      }
+    },
+    {
+      "snapshot": 400,
+      "path": "shades.0.state",
+      "equals": "wander"
+    },
+    {
+      "snapshot": 400,
+      "path": "lanterns.0.lit",
+      "equals": false
+    }
+  ]
+}

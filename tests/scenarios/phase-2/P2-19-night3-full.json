@@ -1,7 +1,8 @@
 {
   "id": "P2-19",
   "night": 3,
-  "requirement": "Night 3 full length (21600 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts)",
+  "changed": "P3: night 3 lasts 300 s (18000 ticks)",
+  "requirement": "Night 3 full length (18000 ticks) runs headless deterministically (perf limit 30 s, measured in tests/cli.test.ts)",
   "seed": 77,
   "ticks": 21600,
   "snapshot_every": 3600,
@@ -16,13 +17,13 @@
     },
     {
       "end": {
-        "ticks": 21600,
+        "ticks": 18000,
         "state": "lost"
       }
     },
     {
       "event": "game_over",
-      "tick": 21600,
+      "tick": 18000,
       "data": {
         "result": "lost",
         "reason": "dawn"

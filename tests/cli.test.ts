@@ -32,7 +32,7 @@ describe('headless CLI', () => {
     expect(ls[0]).toMatchObject({ type: 'snapshot', tick: 0 });
     expect(ls[1]).toEqual({ type: 'event', tick: 0, name: 'night_start', data: { night: 1 } });
     expect(snaps[0].player).toEqual({
-      pos: [0, 0, 0], vel: [0, 0, 0], grounded: true, flames: 3, carried: 0, invuln: false, dash_cd_s: 0, pulse_cd_s: 0, charm_s: 0,
+      pos: [0, 0, 0], vel: [0, 0, 0], grounded: true, flames: 3, carried: 0, capacity: 10 /* Ticket-03 */, invuln: false, dash_cd_s: 0, pulse_cd_s: 0, charm_s: 0,
     });
     expect(Object.keys(snaps[0])).toEqual(
       ['type', 'tick', 'sim_tick', 'night', 'state', 'time_left_s', 'score', 'wind', 'player', 'lanterns', 'shades', 'motes_active', 'motes', 'drifters', 'charms'],
@@ -47,7 +47,7 @@ describe('headless CLI', () => {
     const ms = Date.now() - t0;
     expect(ms).toBeLessThan(30000);
     const ls = lines(out);
-    expect(ls[ls.length - 1]).toMatchObject({ type: 'end', ticks: night === 1 ? 18000 : night === 2 ? 19800 : 21600 });
+    expect(ls[ls.length - 1]).toMatchObject({ type: 'end', ticks: night === 1 ? 14400 : night === 2 ? 16200 : 18000 }); // Ticket-03 night lengths 240/270/300 s
   });
   it('is deterministic across two process runs (incl. generated ids)', () => {
     const inputs = file('det-in.json', { frames: [{ tick: 0, move: [1, 1], cam_yaw_deg: 45 }, { tick: 200, pulse: true }] });

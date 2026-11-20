@@ -1,5 +1,6 @@
 {
   "id": "P2-17",
+  "changed": "P3: night 1 lasts 240 s",
   "requirement": "Pause: tick advances but sim_tick, time and movement freeze; snapshot state \"paused\"; events paused/resumed",
   "seed": 1,
   "ticks": 40,
@@ -64,7 +65,7 @@
     {
       "snapshot": 15,
       "path": "time_left_s",
-      "equals": 299.833
+      "equals": 239.833
     },
     {
       "snapshot": 30,

@@ -1,6 +1,7 @@
 {
   "id": "P2-18",
-  "requirement": "Win/lose evaluated after the tick: lighting the last lantern on the tick time runs out is a win",
+  "changed": "P3: reason dawn_survived, new dawn score",
+  "requirement": "Win/lose evaluated after every update of the tick: lighting a lantern on the dawn tick counts; score 50 + 100 + 4x(50+99) + (50+100) + 150 = 1046",
   "seed": 1,
   "ticks": 10,
   "scenario": {
@@ -50,14 +51,14 @@
       "tick": 3,
       "data": {
         "result": "won",
-        "reason": "all_lit"
+        "reason": "dawn_survived"
       }
     },
     {
       "end": {
         "ticks": 3,
         "state": "won",
-        "score": 350
+        "score": 1046
       }
     }
   ]
