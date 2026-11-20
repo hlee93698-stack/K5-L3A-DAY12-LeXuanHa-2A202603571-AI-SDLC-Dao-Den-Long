@@ -47,6 +47,9 @@
   .rebind-btn.waiting { background: #6a4a10; }
   #shadeArrow { position: fixed; width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
     border-bottom: 28px solid var(--danger); display: none; pointer-events: none; filter: drop-shadow(0 0 6px #000); }
+  #captions { top: 64px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; }
+  #captions div { font-size: 18px; background: var(--panel); border: 1px solid var(--gold); padding: 4px 14px; border-radius: 8px; white-space: nowrap; }
+  #captions div.warn { border-color: var(--danger); }
   .card td { padding: 2px 12px 2px 0; }
   .btns { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
   button { font: inherit; color: var(--text); background: #2a3570; border: 1px solid var(--gold); border-radius: 8px; padding: 8px 14px; cursor: pointer; text-align: left; }
@@ -68,6 +71,7 @@
   <div class="cd" id="cdPulse"><span class="ico">✨</span><div class="fill"></div>Tỏa Sáng</div>
 </div>
 <div class="hud" id="hint"></div>
+<div class="hud" id="captions" aria-live="polite"></div>
 <div class="hud" id="arrow"></div>
 <div class="hud" id="fps"></div>
 <div id="shadeArrow"></div>

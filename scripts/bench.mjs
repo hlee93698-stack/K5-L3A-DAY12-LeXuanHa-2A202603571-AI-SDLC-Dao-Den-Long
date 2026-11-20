@@ -76,7 +76,10 @@ try {
     frame_ms_p95: r.frame_ms_p95,
     frames: r.frames,
     load_ms,
-    peak_mem_mb: r.peak_mem_mb,
+    // Ticket-04: peak_mem_mb = process RSS. A web build cannot read the browser's RSS from the page,
+    // and sampling it from outside during the run would disturb the measurement -> null (see README).
+    peak_mem_mb: null,
+    js_heap_peak_mb: r.js_heap_peak_mb,
     vsync_off: true,
     resolution: '1280x720',
     renderer: `Three.js r170 / ${gpu}`,
@@ -87,7 +90,7 @@ try {
   mkdirSync(dirname(resolve(out)), { recursive: true });
   writeFileSync(out, JSON.stringify(result, null, 2) + '\n');
   const pass = result.avg_fps >= 60 && result.p1_low_fps >= 30 && result.load_ms <= 10000;
-  console.log(`bench: avg ${result.avg_fps} FPS, 1% low ${result.p1_low_fps}, p95 ${result.frame_ms_p95} ms, load ${load_ms} ms, heap ${result.peak_mem_mb} MB — ${pass ? 'PASS' : 'BELOW TARGET'}`);
+  console.log(`bench: avg ${result.avg_fps} FPS, 1% low ${result.p1_low_fps}, p95 ${result.frame_ms_p95} ms, load ${load_ms} ms, JS heap ${result.js_heap_peak_mb} MB — ${pass ? 'PASS' : 'BELOW TARGET'}`);
   await browser.close();
   process.exit(0);
 } catch (e) {

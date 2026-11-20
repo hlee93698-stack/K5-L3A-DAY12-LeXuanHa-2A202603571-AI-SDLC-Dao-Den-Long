@@ -119,6 +119,7 @@ const INTRO: Record<number, string> = {
 };
 
 function loadNight(n: number, scenario?: Scenario, seed?: number) {
+  lowFuelWarned.clear(); transientCaps.clear();
   night = n;
   const s = seed ?? (Date.now() >>> 0) % 1000000;
   if (n === 1) runSeed = s;
@@ -246,15 +247,14 @@ function showResult() {
   if (won) { totalScore += sim.score; nightsWon++; }
   const why = sim.player.flames <= 0 ? 'Mây đã hết Ngọn Lửa.' : 'Trời đã sáng trước khi kịp thắp hết đèn.';
   if (won && night === 3) return showDawn();
-  const lossScore = totalScore + sim.score;
   show(`<h2>Đêm ${night} – ${sim.map.name}</h2><h1>${won ? 'Đảo đã sáng lại!' : 'Mây cần nghỉ một chút…'}</h1>
-    <div>${won ? 'Tất cả Đèn Lồng Lớn đã được thắp.' : why}</div>
+    <div>${won ? 'Mây đã giữ đủ đèn sáng tới bình minh.' : why}</div>
     <div class="big">Điểm đêm: ${sim.score} · Tổng: ${totalScore}</div>
     <div class="btns">${won ? `<button id="bNext">Đêm ${night + 1} (Enter)</button>` : '<button id="bRetry">Chơi lại Đêm (Enter)</button>'}
     ${won ? '' : '<button id="bSaveLb">Lưu vào bảng xếp hạng</button>'}<button id="bMenu">Về menu</button></div>`);
   bind('bNext', () => showIntro(night + 1));
   bind('bRetry', () => showIntro(night));
-  bind('bSaveLb', () => showNameEntry(lossScore, nightsWon, runSeed, showMenu));
+  bind('bSaveLb', () => showNameEntry(totalScore, nightsWon, runSeed, showMenu));
   bind('bMenu', showMenu);
 }
 
@@ -340,6 +340,7 @@ function handleEvents(evs: GameEvent[]) {
         sfx.shadeSpawn();
         const sh = sim.shades.find((s) => s.id === e.data.id);
         if (sh) triggerShadeArrow(sh.x, sh.z);
+        addCaption('shade', '⚠ Bóng Mực xuất hiện (theo mũi tên đỏ)', true);
         break;
       }
       case 'drifter_steal': sfx.steal(); break;
@@ -555,6 +556,7 @@ function frame(now: number) {
   }
   sync(now / 1000, dt);
   updateShadeArrow(phase === 'play' ? dt : 0);
+  updateCaptions(phase === 'play' ? dt : 0);
   renderer.render(scene, camera);
   frames++;
   fpsT += dt;
@@ -570,6 +572,31 @@ function frame(now: number) {
 }
 
 // ---------- shade-spawn arrow ----------
+// ---------- captions (Ticket-04: visual indicators for sound cues) ----------
+const transientCaps = new Map<string, { text: string; t: number; warn: boolean }>();
+const lowFuelWarned = new Set<string>();
+function addCaption(key: string, text: string, warn = false, secs = 3) {
+  transientCaps.set(key, { text, t: secs, warn });
+}
+function updateCaptions(dt: number) {
+  const el = $('captions');
+  if (phase !== 'play') { if (el.innerHTML) el.innerHTML = ''; return; }
+  const items: { text: string; warn: boolean }[] = [];
+  if (sim.nextWindDeg !== null && !sim.wind.active) items.push({ text: '💨 Gió sắp thổi! (xem hướng lá bay)', warn: true });
+  if (sim.timeLeft <= 10 && sim.timeLeft > 0) items.push({ text: `⏳ ${Math.ceil(sim.timeLeft)} giây cuối trước bình minh`, warn: true });
+  for (const l of sim.lanterns) {
+    const low = l.lit && l.fuel < TUNING.low_fuel_threshold;
+    if (low && !lowFuelWarned.has(l.id)) addCaption('fuel' + l.id, `🏮 Đèn ${l.id} sắp cạn dầu (< ${TUNING.low_fuel_threshold})`, true);
+    if (low) lowFuelWarned.add(l.id); else lowFuelWarned.delete(l.id);
+  }
+  for (const [k, v] of transientCaps) {
+    v.t -= dt;
+    if (v.t <= 0) transientCaps.delete(k); else items.push(v);
+  }
+  const html = items.map((i) => `<div class="${i.warn ? 'warn' : ''}">${i.text}</div>`).join('');
+  if (el.innerHTML !== html) el.innerHTML = html;
+}
+
 let shadeArrowT = 0;
 let shadeArrowDir = 0; // angle in radians
 function triggerShadeArrow(sx: number, sz: number) {
@@ -625,7 +652,7 @@ function showNameEntry(score: number, nightsWon: number, seed: number, onDone: (
     <div>Tổng điểm: <b style="color:var(--gold)">${score}</b> · ${nightsWon}/3 đêm thắng</div>
     <label>Tên (3–12 ký tự A–Z 0–9 _):</label>
     <input id="nameIn" type="text" maxlength="12" placeholder="Mây" style="width:100%;padding:8px;font:inherit;background:#1a2050;border:1px solid var(--gold);border-radius:6px;color:var(--text)">
-    <div id="nameErr" style="color:var(--danger);font-size:13px;min-height:18px"></div>
+    <div id="nameErr" style="color:var(--danger);font-size:18px;min-height:18px"></div>
     <div class="btns"><button id="bSaveName">Lưu &amp; xem bảng xếp hạng</button><button id="bSkipName">Bỏ qua</button></div>`);
   const inp = $('nameIn') as HTMLInputElement;
   inp.focus();
@@ -703,7 +730,8 @@ function runBenchMode(seed: number, durationS: number) {
   // Build Night 1 scene
   loadNight(1, { player: { flames: 999 }, lanterns: [{ id: 'L1', lit: true, fuel: 100 }, { id: 'L2', lit: true, fuel: 100 }, { id: 'L3', lit: true, fuel: 100 }], random_shades: false, shades: [], random_motes: false, motes: [] }, seed);
   sync(0, 0);
-  player.g.visible = false;
+  // Ticket-04: Mây stands still at (0,0,0)
+  player.g.position.set(0, 0, 0);
   // Hide all HUD
   document.body.classList.add('bench');
   $('fps').style.display = 'block';
@@ -744,7 +772,8 @@ function runBenchMode(seed: number, durationS: number) {
     if (!warmupDone && benchT >= 3) { warmupDone = true; }
 
     sync(benchT, dt);
-    player.g.visible = false;
+    player.g.position.set(0, 0, 0);
+    player.g.visible = true;
     // Orbit camera: CCW from above, period 15 s
     const theta = (benchT / 15) * Math.PI * 2;
     camera.position.set(30 * Math.cos(theta), 15, 30 * Math.sin(theta));
@@ -780,7 +809,7 @@ function runBenchMode(seed: number, durationS: number) {
       (window as unknown as Record<string, unknown>).__benchResult = {
         avg_fps: Math.round(avg * 10) / 10, p1_low_fps: Math.round(p1low * 10) / 10,
         frame_ms_p95: Math.round(p95 * 100) / 100, frames: N,
-        peak_mem_mb: peakHeap ? Math.round((peakHeap / 1024 / 1024) * 10) / 10 : null,
+        js_heap_peak_mb: peakHeap ? Math.round((peakHeap / 1024 / 1024) * 10) / 10 : null,
       };
       (window as unknown as Record<string, unknown>).__benchDone = true;
       return;
