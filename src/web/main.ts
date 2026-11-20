@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { Sim } from '../sim/sim';
 import { TUNING, WORLD } from '../sim/tuning';
 import { mulberry32 } from '../sim/rng';
-import { defaultInput, type GameEvent, type InputState } from '../sim/types';
+import { defaultInput, type GameEvent, type InputState, type Scenario } from '../sim/types';
 import { Sfx } from './sfx';
 
 const $ = (id: string) => document.getElementById(id) as HTMLElement;
@@ -40,9 +40,17 @@ resize();
 const R = WORLD.island_radius;
 const island = new THREE.Mesh(
   new THREE.CylinderGeometry(R, R - 7, 6, 80),
-  new THREE.MeshStandardMaterial({ color: 0x2d4636, roughness: 1 }),
+  new THREE.MeshStandardMaterial({ color: 0x3d5a45, roughness: 1 }),
 );
 island.position.y = -3;
+// small stone path ring linking the lanterns (decor)
+const path = new THREE.Mesh(
+  new THREE.RingGeometry(WORLD.lantern_ring_radius - 0.8, WORLD.lantern_ring_radius + 0.8, 96),
+  new THREE.MeshStandardMaterial({ color: 0x5a5148, roughness: 1 }),
+);
+path.rotation.x = -Math.PI / 2;
+path.position.y = 0.01;
+scene.add(path);
 scene.add(island);
 const rim = new THREE.Mesh(
   new THREE.TorusGeometry(R, 0.35, 8, 120),
@@ -64,12 +72,11 @@ for (let i = 0; i < 70; i++) {
 }
 const treeMat = new THREE.MeshStandardMaterial({ color: 0x1f3a2c, roughness: 1 });
 const trunkMat = new THREE.MeshStandardMaterial({ color: 0x3e2c22, roughness: 1 });
-for (let i = 0; i < 45; i++) {
+for (let i = 0; i < 40; i++) {
   const a = decoRng() * Math.PI * 2;
-  const r = 8 + decoRng() * (R - 10);
+  const r = 32 + decoRng() * (R - 33); // trees only near the shore: never block the play area/camera
   const x = r * Math.sin(a);
   const z = r * Math.cos(a);
-  if (Math.abs(r - WORLD.lantern_ring_radius) < 4) continue; // keep lantern ring clear
   const h = 2 + decoRng() * 2.5;
   const tree = new THREE.Group();
   const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.22, 1, 6), trunkMat);
@@ -214,9 +221,9 @@ let sim = new Sim({ seed: 1 });
 let seed = 1;
 let facing = 0;
 
-function startGame() {
-  seed = (Date.now() >>> 0) % 1000000;
-  sim = new Sim({ seed });
+function startGame(fixedSeed?: number, scenario?: Scenario) {
+  seed = fixedSeed ?? (Date.now() >>> 0) % 1000000;
+  sim = new Sim({ seed, scenario });
   for (const v of moteViews.values()) scene.remove(v);
   moteViews.clear();
   for (const v of shadeViews.values()) scene.remove(v.g);
@@ -364,7 +371,7 @@ function sync(time: number, frameDt: number) {
 
   // island brightens as lanterns are lit
   const lit = sim.litCount / sim.lanterns.length;
-  hemi.intensity = 0.45 + lit * 1.1;
+  hemi.intensity = 0.9 + lit * 1.2;
   (scene.background as THREE.Color).copy(NIGHT).lerp(WARM, lit);
   const fog = scene.fog as THREE.Fog;
   fog.color.copy(scene.background as THREE.Color);
@@ -426,6 +433,24 @@ function frame(now: number) {
 }
 
 showMenu();
-// Debug hook for automated screenshots: ?autostart=1
-if (new URLSearchParams(location.search).has('autostart')) startGame();
+// Automated screenshots (scripts/screenshot.mjs): ?shot=<name> starts a fixed scenario, ?shot=over ends it.
+const SHOTS: Record<string, Scenario> = {
+  start: {},
+  lit: {
+    player: { pos: [1.5, 0, 17], carried: 4 },
+    lanterns: [{ id: 'L1', lit: true }, { id: 'L2', deposited: 3 }],
+    random_shades: false,
+    shades: [{ pos: [5, 0, 13] }, { pos: [-5, 0, 11] }],
+  },
+  lose: { player: { flames: 1 }, random_shades: false, shades: [{ pos: [0, 0, 0.5] }] },
+};
+const shot = new URLSearchParams(location.search).get('shot');
+if (shot && SHOTS[shot]) {
+  startGame(42, SHOTS[shot]);
+  if (shot === 'lose') {
+    sim.step(defaultInput());
+    phase = 'over';
+    showGameOver();
+  }
+}
 requestAnimationFrame(frame);
