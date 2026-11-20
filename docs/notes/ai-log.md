@@ -54,3 +54,18 @@ Công cụ: **Claude Code** (VS Code extension), model Claude Opus. Harness: [AG
 **Token / chi phí (ước tính):** khoảng 250–300k token cho Phase 2 (ticket dài, viết lại sim và web). _(Cập nhật số thật từ `/cost`.)_
 
 **Cách tiết kiệm:** viết giả định một lần rồi code theo; giá trị mong đợi tính tay nên ít vòng sửa; dồn kiểm tra vào `npm run verify` (một lệnh cho 35 scenario); không dùng subagent.
+
+## Phase 3
+
+**Lời nhắc chính:** "Tiếp tục với p3", kèm dán Ticket-03. Người dùng yêu cầu lưu lại thay đổi của từng phiên bản → CHANGELOG.md có bảng phiên bản/commit và danh sách breaking change từng phase.
+
+**Cách làm:** viết ADR-003 và CHANGELOG trước; lưu dầu bằng số nguyên 1/60; chạy lại spec cũ để thấy chính xác 6 spec bị luật mới thay, sửa từng cái kèm `changed`.
+
+| Lỗi của AI | Phát hiện | Xử lý |
+|---|---|---|
+| Chèn `// comment` vào giữa một dòng object trong test CLI, làm mất các trường phía sau | Test đỏ | Dùng `/* */` |
+| Thanh dầu dạng mặt phẳng + lookAt không hiện | Xem ảnh chụp | Đổi sang Sprite; lần đầu lệch nửa → tính lại tâm |
+| Ảnh Đêm 3 trống | Xem ảnh | Chụp lại (khung đầu chưa vẽ) |
+| Lệnh `node -e "..."` chứa backtick trong bash bị shell hiểu sai | Lỗi cú pháp, không file nào bị ghi | Ghi file bằng công cụ sửa file |
+
+**Token (ước tính):** ~120–150k cho Phase 3. _(Cập nhật số thật từ `/cost`.)_

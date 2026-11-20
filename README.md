@@ -1,7 +1,7 @@
 # Đảo Đèn Lồng
 
 > **Video demo:** _(sẽ thêm ở Phase 4: Release `v1.0.0`)_
-> Bài lab Day 12 AI SDLC, cá nhân: Lê Xuân Hà, MSSV 2A202603571. Đề bài: [docs/lab/](docs/lab/README.md). Test Contract **v1.1**.
+> Bài lab Day 12 AI SDLC, cá nhân: Lê Xuân Hà, MSSV 2A202603571. Đề bài: [docs/lab/](docs/lab/README.md). Test Contract **v1.2**. Lịch sử thay đổi từng phiên bản: [CHANGELOG.md](CHANGELOG.md).
 
 Game 3D góc nhìn thứ ba. **Mây**, người giữ đèn nhỏ tuổi đội nón lá, đi qua **3 Đêm** (Đảo Bến, Đảo Cau, Đảo Chuông) gom đom đóm để thắp lại các Đèn Lồng Lớn trước bình minh, đồng thời né **Bóng Mực** và **Gió Lạc**.
 
