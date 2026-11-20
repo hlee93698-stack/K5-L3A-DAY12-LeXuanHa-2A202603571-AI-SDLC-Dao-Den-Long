@@ -6,5 +6,5 @@ release/
 *.log
 .claude/settings.local.json
 data/leaderboard.json
-bench.json
-soak.json
+/bench.json
+/soak.json
