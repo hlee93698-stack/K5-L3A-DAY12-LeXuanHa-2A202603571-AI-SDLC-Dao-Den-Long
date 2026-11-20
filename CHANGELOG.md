@@ -19,7 +19,7 @@ Luật mô phỏng và output headless giữ nguyên (mọi scenario cũ vẫn �
 - **Bảng xếp hạng:** nhập tên sau khi thua/Bình Minh, xem từ menu, top 10; `data/leaderboard.json` qua `/api/leaderboard`; xuất bằng `npm start -- --export-leaderboard out.json`.
 - **Trợ năng:** đổi phím (đổi chỗ khi trùng, khôi phục mặc định), giảm chuyển động, chữ lớn ×1.25, chữ nội dung ≥ 18 px, mũi tên báo Bóng Mực mới xuất hiện.
 - **Hiệu năng:** Bóng Mực gộp từ 7 mesh còn 3 mesh dùng chung geometry.
-- **Hình ảnh** (trước Phase 4, commit `7e18051`, `6af8913`): Mây theo phong cách chibi tóc trắng bịt mắt, Bóng Mực hình giọt mực, Gió Lạc dạng xoáy, cây dừa, lan can cầu tre, đèn treo trên tháp. Chỉ ở `src/web/`.
+- **Hình ảnh** (commit `7e18051`): Mây mặc áo dài, đội nón lá, cầm đèn lồng nhỏ; Bóng Mực hình giọt mực, Gió Lạc dạng xoáy, cây dừa, lan can cầu tre, đèn treo trên tháp. Chỉ ở `src/web/`.
 
 ## Phase 3 (contract 1.2) — BREAKING so với 1.1
 
