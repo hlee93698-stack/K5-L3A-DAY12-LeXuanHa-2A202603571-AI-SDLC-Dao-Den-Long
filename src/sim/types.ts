@@ -7,24 +7,40 @@ export interface InputState {
   interact: boolean;
   pulse: boolean;
   dash: boolean;
+  pause: boolean;
 }
 
 export interface InputFrame extends Partial<InputState> {
   tick: number;
 }
 
+export type ShadeState = 'spawning' | 'wander' | 'chase' | 'recoil' | 'stunned';
+export type DrifterState = 'idle' | 'chase' | 'flee' | 'removed';
+export type MoteKind = 'random' | 'dropped';
+
 export interface Scenario {
-  player?: { pos?: Vec3; carried?: number; flames?: number };
+  player?: {
+    pos?: Vec3;
+    carried?: number;
+    flames?: number;
+    invuln_ticks?: number;
+    dash_cd_ticks?: number;
+    pulse_cd_ticks?: number;
+    charm_ticks?: number;
+  };
   random_motes?: boolean;
   random_shades?: boolean;
-  motes?: { id?: string; pos: Vec3 }[];
-  shades?: { id?: string; pos: Vec3 }[];
+  random_drifters?: boolean;
+  wind_enabled?: boolean;
+  motes?: { id?: string; pos: Vec3; kind?: MoteKind; ttl_ticks?: number }[];
+  shades?: { id?: string; pos: Vec3; state?: ShadeState; state_ticks_left?: number }[];
+  drifters?: { id?: string; pos: Vec3; state?: DrifterState; stolen?: number; state_ticks_left?: number }[];
+  charms?: { id?: string; pos?: Vec3; available?: boolean; respawn_ticks?: number }[];
   lanterns?: { id: string; pos?: Vec3; deposited?: number; lit?: boolean }[];
   time_left_s?: number;
 }
 
-export type GameState = 'playing' | 'won' | 'lost';
-export type ShadeState = 'chase' | 'stunned';
+export type GameState = 'playing' | 'paused' | 'won' | 'lost';
 
 export interface GameEvent {
   type: 'event';
@@ -33,41 +49,6 @@ export interface GameEvent {
   data: Record<string, unknown>;
 }
 
-export interface Mote {
-  id: string;
-  x: number;
-  z: number;
-}
-
-export interface Shade {
-  id: string;
-  x: number;
-  y: number;
-  z: number;
-  state: ShadeState;
-  stun: number; // remaining stun steps
-}
-
-export interface Lantern {
-  id: string;
-  x: number;
-  z: number;
-  lit: boolean;
-  deposited: number;
-}
-
-export interface Player {
-  x: number;
-  y: number;
-  z: number;
-  vy: number;
-  onGround: boolean;
-  flames: number;
-  carried: number;
-  invuln: number; // remaining invulnerable steps
-  cooldown: number; // remaining pulse cooldown steps
-}
-
 export function defaultInput(): InputState {
-  return { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false, dash: false };
+  return { move: [0, 0], cam_yaw_deg: 0, jump: false, interact: false, pulse: false, dash: false, pause: false };
 }

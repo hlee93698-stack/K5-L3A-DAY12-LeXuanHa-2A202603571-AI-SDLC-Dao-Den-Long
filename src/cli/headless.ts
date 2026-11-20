@@ -1,4 +1,4 @@
-// CLI: <headless_cmd> --seed <int> --night 1 [--scenario f.json] [--inputs f.json]
+// CLI: <headless_cmd> --seed <int> --night <1|2|3> [--scenario f.json] [--inputs f.json]
 //                     --ticks <int> --out f.jsonl [--snapshot-every <int, default 10>]
 // Exit 0 ok; 2 malformed inputs/scenario; 1 any other error (bad args, IO).
 import * as fs from 'node:fs';
@@ -10,7 +10,7 @@ import { seedToUint32 } from '../sim/rng';
 class UsageError extends Error {}
 
 const USAGE =
-  'usage: headless --seed <int> --night 1 [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]';
+  'usage: headless --seed <int> --night <1|2|3> [--scenario <file.json>] [--inputs <file.json>] --ticks <int> --out <file.jsonl> [--snapshot-every <int>]';
 
 function parseArgs(argv: string[]) {
   const a: Record<string, string> = {};
@@ -32,9 +32,10 @@ function parseArgs(argv: string[]) {
   };
   if (a.seed === undefined || !/^-?\d+$/.test(a.seed)) throw new UsageError('--seed <int> is required');
   const night = int('night', 1);
-  if (night !== 1) throw new UsageError(`night ${night} is not available (only night 1)`);
+  if (night > 3) throw new UsageError(`night ${night} is not available (1, 2 or 3)`);
   if (!a.out) throw new UsageError('--out <file.jsonl> is required');
   return {
+    night,
     seed: seedToUint32(a.seed),
     ticks: int('ticks', 0),
     snapshotEvery: a['snapshot-every'] === undefined ? 10 : int('snapshot-every', 1),
@@ -61,9 +62,9 @@ function readJson(file: string, what: string): unknown {
 function main() {
   try {
     const args = parseArgs(process.argv.slice(2));
-    const scenario = args.scenarioPath ? parseScenario(readJson(args.scenarioPath, 'scenario')) : undefined;
+    const scenario = args.scenarioPath ? parseScenario(readJson(args.scenarioPath, 'scenario'), args.night) : undefined;
     const inputs = args.inputsPath ? parseInputs(readJson(args.inputsPath, 'inputs')) : undefined;
-    const { lines } = runHeadless({ seed: args.seed, ticks: args.ticks, snapshotEvery: args.snapshotEvery, scenario, inputs });
+    const { lines } = runHeadless({ seed: args.seed, night: args.night, ticks: args.ticks, snapshotEvery: args.snapshotEvery, scenario, inputs });
     const dir = path.dirname(path.resolve(args.out));
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(args.out, lines.join('\n') + '\n');

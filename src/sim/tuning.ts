@@ -1,65 +1,87 @@
-// Single source of truth for gameplay numbers.
-// game.contract.json "tuning" MUST equal TUNING (enforced by tests/contract.test.ts).
+// Standard numbers from Ticket-02 (contract v1.1). Single source of truth.
+// game.contract.json "tuning" MUST equal TUNING (enforced by tests).
 
 export const TUNING = {
-  player_speed: 6, // m/s
-  carry_capacity: 10, // motes
-  lantern_cost: 5, // motes needed to light one lantern
+  player_speed: 6,
+  carry_capacity: 10,
+  lantern_cost: 10,
   lantern_count_night1: 5,
-  pickup_radius: 1.5, // m, automatic pickup
-  interact_radius: 3, // m, deposit into lantern on interact
-  pulse_cost: 1, // carried motes spent per pulse
-  pulse_radius: 6, // m
+  pickup_radius: 1,
+  interact_radius: 2,
+  pulse_cost: 3,
+  pulse_radius: 5,
   night1_duration_s: 300,
-  flames: 3, // player health
+  night2_duration_s: 330,
+  night3_duration_s: 360,
+  flames: 3,
   invuln_s: 1.5,
-  hit_drop_ratio: 0.5, // floor(carried * ratio) motes lost per hit
-  pulse_stun_s: 3,
+  hit_drop_ratio: 0.5,
+  pulse_stun_s: 2,
   pulse_push_m: 4,
-  pulse_cooldown_s: 2,
-  safe_radius: 6, // shades cannot come within this distance of a LIT lantern
-  shade_speed: 4, // m/s
-  shade_hit_radius: 1, // m
-  fall_enabled: false, // island edge is a wall; no falling
+  pulse_cooldown_s: 3,
+  safe_radius: 6,
+  shade_speed: 4,
+  shade_hit_radius: 1,
+  fall_enabled: true,
+  dash_speed: 14,
+  dash_duration_s: 0.2,
+  dash_cooldown_s: 1.5,
   score: {
-    per_mote: 10,
+    per_mote: 10, // per mote DEPOSITED
     per_lantern: 100,
-    per_stun: 20,
-    per_second_left: 2, // on win: floor(time_left_s) * this
-    per_flame_left: 50, // on win: flames * this
+    per_stun: 5, // per shade hit by a pulse (each shade, each pulse)
+    per_second_left: 2, // on win
+    per_flame_left: 50, // on win
   },
 };
 
 export type Tuning = typeof TUNING;
 
-// Numbers that are not part of the contract tuning block (documented in README).
-export const WORLD = {
+// Other standard numbers from Ticket-02 (not part of the tuning block) + documented assumptions (B*).
+export const K = {
   tick_rate: 60,
-  island_radius: 40,
-  lantern_ring_radius: 25,
-  gravity: 20, // m/s^2
-  jump_velocity: 7, // m/s -> apex ~1.23 m
-  shade_y: 1, // shade center height
-  mote_target: 20, // random motes kept on the island
-  mote_respawn_s: 2,
-  mote_min_r: 3,
-  mote_max_r: 37,
-  shades_initial: 3,
-  shades_max: 6,
-  shade_spawn_interval_s: 40,
-  shade_spawn_r: 35,
-  shade_spawn_min_dist_to_player: 15,
-  safe_eps: 0.01, // shades are kept strictly outside safe_radius
+  gravity: 20,
+  jump_velocity: 7,
+  step_up: 0.35, // B4: max step height; higher = wall
+  pickup_dy: 1.5, // max height difference for pickup / hit
+  charm_speed: 7.2,
+  charm_ticks: 600,
+  charm_respawn_ticks: 2700,
+  pulse_center_dy: 0.8,
+  pulse_push_ticks: 15,
+  shade_y: 1, // shade center above ground
+  shade_detect: 12,
+  shade_lose: 18,
+  shade_recoil_m: 2,
+  shade_recoil_ticks: 60,
+  shade_spawning_ticks: 60, // B7
+  shade_wander_speed: 2, // B8
+  wander_turn_ticks: 120,
+  shade_first_spawn_tick: 300,
+  shade_spawn_min_dist: 15,
+  evict_ticks: 30,
+  mote_initial: 20,
+  mote_cap: 30,
+  mote_spawn_every: 240,
+  mote_free_r: 0.5, // B12
+  drop_r_min: 1.5,
+  drop_r_max: 2.5,
+  drop_ttl: 480,
+  fall_y: -10,
+  respawn_wait: 60,
+  drifter_speed: 7,
+  drifter_idle_speed: 2,
+  drifter_max: 2,
+  drifter_spawn_every: 1200,
+  drifter_chase_carried: 5,
+  drifter_chase_dist: 15,
+  drifter_touch: 1.2,
+  drifter_steal: 3,
+  drifter_flee_ticks: 240,
+  drifter_drop_vanish_ticks: 120,
+  drifter_y: 1.2,
+  wind_every: 1800,
+  wind_ticks: 300,
+  wind_warn_ticks: 120,
+  wind_speed: 2,
 };
-
-export const LANTERN_IDS = ['L1', 'L2', 'L3', 'L4', 'L5'];
-
-// Default lantern positions: ring of radius 25, L1 at +Z, 72 deg apart (rounded to 3 dp).
-export const DEFAULT_LANTERNS: { id: string; x: number; z: number }[] = LANTERN_IDS.map((id, i) => {
-  const a = (i * 2 * Math.PI) / 5;
-  const r3 = (v: number) => {
-    const o = Math.round(v * 1000) / 1000;
-    return o === 0 ? 0 : o;
-  };
-  return { id, x: r3(WORLD.lantern_ring_radius * Math.sin(a)), z: r3(WORLD.lantern_ring_radius * Math.cos(a)) };
-});
