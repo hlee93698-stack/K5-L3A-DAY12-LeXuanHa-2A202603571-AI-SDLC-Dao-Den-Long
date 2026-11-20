@@ -14,7 +14,8 @@
     "test": "npm run build && tsc --noEmit && vitest run",
     "verify": "npm run build && node scripts/verify.mjs",
     "headless": "node dist/headless.cjs",
-    "bench": "npm run build && node scripts/bench-fps.mjs"
+    "bench": "npm run build && node scripts/bench-fps.mjs",
+    "package": "npm run build && node scripts/package.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.17.6",
