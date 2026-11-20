@@ -1,0 +1,21 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [],
+  "shades": [],
+  "player": {
+    "charm_ticks": 600
+  },
+  "charms": [
+    {
+      "id": "C1",
+      "pos": [
+        30,
+        0,
+        0
+      ],
+      "available": false,
+      "respawn_ticks": 10
+    }
+  ]
+}

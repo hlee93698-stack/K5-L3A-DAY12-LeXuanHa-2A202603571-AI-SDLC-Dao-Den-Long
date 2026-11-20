@@ -6,13 +6,13 @@
     {
       "id": "S1",
       "pos": [
-        5,
+        4,
         0,
         0
       ]
     }
   ],
   "player": {
-    "carried": 2
+    "carried": 4
   }
 }

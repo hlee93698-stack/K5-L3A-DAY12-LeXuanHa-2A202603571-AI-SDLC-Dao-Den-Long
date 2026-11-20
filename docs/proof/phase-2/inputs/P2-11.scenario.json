@@ -1,0 +1,15 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [],
+  "shades": [],
+  "random_drifters": false,
+  "wind_enabled": false,
+  "player": {
+    "pos": [
+      25.981,
+      0,
+      15
+    ]
+  }
+}

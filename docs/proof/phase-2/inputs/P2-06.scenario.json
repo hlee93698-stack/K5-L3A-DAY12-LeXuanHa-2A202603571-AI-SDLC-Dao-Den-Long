@@ -1,0 +1,33 @@
+{
+  "random_motes": false,
+  "random_shades": false,
+  "motes": [],
+  "shades": [
+    {
+      "id": "S1",
+      "pos": [
+        1,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "S2",
+      "pos": [
+        0,
+        0,
+        -30
+      ]
+    },
+    {
+      "id": "S3",
+      "pos": [
+        -20,
+        0,
+        0
+      ],
+      "state": "spawning",
+      "state_ticks_left": 10
+    }
+  ]
+}
