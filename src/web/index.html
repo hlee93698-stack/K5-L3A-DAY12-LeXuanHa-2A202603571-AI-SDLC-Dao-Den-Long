@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đảo Đèn Lồng</title>
+<style>
+  :root { --amber: #ffb347; --violet: #8b5cf6; --ink: #120a1f; --text: #fbefd9; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: var(--ink); color: var(--text);
+    font-family: system-ui, "Segoe UI", Roboto, sans-serif; }
+  canvas { display: block; width: 100vw; height: 100vh; }
+  #hud { position: fixed; top: 12px; left: 12px; display: grid; gap: 4px; font-size: 15px;
+    background: rgba(18,10,31,.55); padding: 10px 14px; border-radius: 10px; border: 1px solid rgba(255,179,71,.25);
+    pointer-events: none; min-width: 210px; }
+  #hud b { color: var(--amber); font-weight: 600; }
+  #flames { letter-spacing: 2px; color: var(--amber); }
+  #hint { position: fixed; bottom: 70px; left: 50%; transform: translateX(-50%); font-size: 16px;
+    background: rgba(18,10,31,.65); padding: 6px 14px; border-radius: 8px; display: none; pointer-events: none; }
+  #keys { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 12px; opacity: .7;
+    pointer-events: none; white-space: nowrap; }
+  #flash { position: fixed; inset: 0; background: radial-gradient(circle, transparent 40%, rgba(90,20,140,.7));
+    opacity: 0; pointer-events: none; transition: opacity .35s; }
+  #overlay { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: rgba(12,6,24,.72); }
+  #overlay .card { max-width: 520px; margin: 16px; padding: 24px 28px; border-radius: 14px; background: rgba(28,16,48,.92);
+    border: 1px solid rgba(255,179,71,.35); line-height: 1.5; }
+  #overlay h1 { margin: 0 0 6px; color: var(--amber); font-size: 30px; }
+  #overlay .big { font-size: 18px; margin-top: 14px; color: var(--amber); }
+  #overlay table { border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+  #overlay td { padding: 2px 10px 2px 0; }
+  kbd { background: #2e2050; border: 1px solid #55408a; border-radius: 4px; padding: 0 5px; font-size: 13px; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <div>Lửa: <span id="flames"></span></div>
+  <div>Đom đóm mang: <b id="carried">0</b> / <span id="cap"></span></div>
+  <div>Đèn đã thắp: <b id="lit">0</b> / <span id="lcount"></span></div>
+  <div>Trời sáng sau: <b id="time">5:00</b></div>
+  <div>Điểm: <b id="score">0</b></div>
+  <div>Tỏa sáng: <span id="pulse">sẵn sàng</span></div>
+</div>
+<div id="hint"></div>
+<div id="keys"><kbd>WASD</kbd> đi · <kbd>Space</kbd> nhảy · <kbd>E</kbd> nạp đèn · <kbd>F</kbd> tỏa sáng · kéo chuột / <kbd>←</kbd><kbd>→</kbd> xoay camera · <kbd>M</kbd> tắt tiếng</div>
+<div id="flash"></div>
+<div id="overlay"><div class="card" id="card"></div></div>
+<script src="main.js"></script>
+</body>
+</html>
