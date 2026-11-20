@@ -47,26 +47,40 @@ Các test cũ đều **sửa kèm lý do** như bảng trên, không tắt test 
 | B21 | Rơi khi đang chờ hồi sinh | Mây đứng yên tại chỗ rơi. Không nhặt, không tương tác, không Tỏa Sáng, không bị cướp |
 | B22 | Điểm khi thua | Dòng `end` của headless ghi điểm của Đêm đó. Bản chơi: tổng điểm game chỉ cộng các Đêm đã thắng |
 
-## 3. Tiêu chí nghiệm thu (Phần 3 và chuẩn hóa)
+## 3. Tiêu chí nghiệm thu và kết quả
 
-| Mục | Tiêu chí kiểm chứng được | Kiểm chứng |
-|---|---|---|
-| Số chuẩn | `tuning` khớp ticket. Phase 1 chạy lại với số mới | unit `contract`, spec P1 đã sửa |
-| Lướt | 12 tick × 14 m/s = 2.8 m; hồi 90 tick; đứng yên thì lướt theo hướng mặt; trên không giữ Y | P2-01, P2-02 |
-| Rơi khỏi đảo | Y < −10 → `player_hit {by:fall, lost}`; hồi sinh ở xuất phát sau 60 tick, bất tử 90 tick | P2-03 |
-| Đom đóm rơi | Bị đánh → floor(n/2) đom đóm `dropped` trong vành 1.5–2.5 m, nhặt lại được, hết sau 480 tick | P2-04 |
-| Trạng thái Bóng Mực | spawning → wander/chase; recoil 60 tick lùi 2 m; stunned 120 tick, đẩy 4 m trong 15 tick | P2-05, P2-06 |
-| Lịch sinh | Đêm 1: 2 con ở tick 300, con thứ 3 ở 780; đom đóm thứ 21 ở tick 240 | P2-07 |
-| Vùng an toàn | Bóng Mực bị chặn ở mép 6 m; con ở trong lúc vừa thắp bị đẩy ra trong ≤ 30 tick, không gây sát thương | P2-08 |
-| Đêm 2 | 6 đèn, cầu tre, bục nhảy đưa Mây sang đảo kia | P2-09 |
-| Đêm 3 | 7 đèn, 3 tầng, dốc lên tầng 1, vách chặn, gió mạnh ở tick 1800 | P2-10, P2-11 |
-| Gió Lạc | idle → chase khi mang ≥ 5 và ≤ 15 m; cướp min(3, n), flee 240 tick rồi removed; Tỏa Sáng lúc flee thả lại đồ cướp | P2-12, P2-13 |
-| Bùa Gió | Nhặt → 600 tick, chạy 7.2 m/s, lướt không hồi chiêu; xuất hiện lại sau 2700 tick | P2-14 |
-| Tạm dừng | Tick tăng, sim_tick/thời gian đứng yên, `state: paused`, event paused/resumed | P2-15 |
-| Thắng/thua cuối tick | Thắp đèn cuối đúng tick hết giờ → thắng | P2-16 |
-| Hiệu năng headless | Đêm đầy đủ 21600 tick ≤ 30 s | P2-17 + đo thời gian |
-| Chuỗi 3 Đêm, menu, giới thiệu, kết quả, Bình Minh | Luồng chơi trong bản web | ảnh chụp |
-| Tạm dừng (UI), Cài đặt lưu giữa các lần mở | Esc/P mở menu; âm lượng và độ nhạy chuột lưu vào `localStorage` | ảnh chụp, đọc code |
-| Âm thanh | Nhạc nền + hiệu ứng (nhặt, thắp, tỏa sáng, bị đánh, nhảy, lướt, thắng, thua, Bóng Mực xuất hiện, đếm ngược 10 s) | đọc code `sfx.ts` (không chụp được âm thanh) |
-| HUD và bảng màu | Bố cục và màu theo ticket | ảnh chụp |
-| ≥ 30 FPS ở 1280×720 | Đo FPS trung bình trong trình duyệt | số đo + cấu hình máy |
+Spec headless: `tests/scenarios/phase-2/` (sinh từ `tests/scenarios/gen-specs.mjs`). Báo cáo: [../proof/phase-2/report.md](../proof/phase-2/report.md).
+
+| Mục | Tiêu chí kiểm chứng được | Kiểm chứng | Kết quả |
+|---|---|---|---|
+| Số chuẩn | `tuning` khớp ticket; spec Phase 1 chạy lại với số mới | unit `contract v1.1`; P1-01…P1-16 | PASS |
+| Lướt | 12 tick × 14 m/s = 2.8 m; hồi 90 tick tính từ lúc bắt đầu; đứng yên thì lướt theo hướng mặt; trên không giữ Y | P2-01, P2-02, unit | PASS |
+| Rơi khỏi đảo | Y < −10 → `player_hit {by: fall, lost}` đúng 1 lần; hồi sinh ở xuất phát sau 60 tick, bất tử | P2-03, P2-10 | PASS |
+| Đom đóm rơi | Bị đánh → floor(n/2) đom đóm `dropped` ở vành 1.5–2.5 m, ttl 8 s, nhặt lại được, tan khi hết ttl | P2-04, P2-05, P1-09 | PASS |
+| Trạng thái Bóng Mực | `spawning` → `wander`/`chase`; `recoil` lùi 2 m/60 tick; `stunned` 120 tick, đẩy 4 m/15 tick, làm mới khi trúng lại | P2-06, P1-07, unit | PASS |
+| Chạm | Tối đa 1 lần mất lửa mỗi tick, theo id tăng dần; bất tử thì không có tác dụng | unit | PASS |
+| Lịch sinh | 20 đom đóm, +1 ở tick 240; S1+S2 ở tick 300, S3 ở 780; tối đa 6; cách người chơi ≥ 15 m; trần 30 đom đóm, chỉ điểm trống | P2-07, unit | PASS |
+| Vùng an toàn | Chặn ở mép 6 m; con ở trong lúc vừa thắp bị đẩy ra trong 30 tick, không gây sát thương | P2-08, P1-10 | PASS |
+| Tỏa Sáng 3D | Tâm = chân + 0.8 m; mục tiêu theo khoảng cách 3D ≤ 5 m | unit | PASS |
+| Đêm 2 | 6 đèn đúng vị trí; cầu tre đi được, bước ra mép cầu thì rơi; bục nhảy đưa sang đảo B | P2-09, P2-10 | PASS |
+| Đêm 3 | 7 đèn; dốc lên tầng 1 (Y=3); vách tầng 2 chặn; tháp không leo được; mọi điểm đom đóm/đèn nằm đúng tầng | P2-11, unit `maps` | PASS |
+| Gió mạnh | Tick 1800, 300 tick, đẩy 2 m/s (đúng 10 m) | P2-12 | PASS |
+| Gió Lạc | idle → chase (mang ≥ 5, ≤ 15 m) → cướp 3 → flee 240 → removed; Tỏa Sáng: chase → flee không cướp, flee → thả đồ, tan sau 120 tick; spawn tick 1200 chỉ ở Đêm 2/3 | P2-13, P2-14, unit | PASS |
+| Bùa Gió | Nhặt → `charm_picked`, 600 tick, 7.2 m/s; lướt không hồi chiêu nhưng phải bấm lại; xuất hiện lại sau 2700 tick | P2-15, P2-16 | PASS |
+| Tạm dừng (logic) | Tick tăng, sim_tick/thời gian/di chuyển đứng yên, `state: paused`, event `paused`/`resumed` | P2-17 | PASS |
+| Thắng/thua cuối tick | Thắp đèn cuối đúng tick hết giờ → thắng | P2-18 | PASS |
+| Hiệu năng headless | Đêm đầy đủ ≤ 30 s | `tests/cli.test.ts` (đo cả 3 Đêm, ~0.2 s mỗi Đêm), P2-19 | PASS |
+| Chuỗi 3 Đêm | Menu → giới thiệu (tên đảo, lời Ông Đăng) → chơi → kết quả → Đêm kế; thắng Đêm 3 → Bình Minh với tổng điểm; thua → chơi lại Đêm đó | ảnh `menu`, `intro-night2`, `dawn`; đọc `main.ts` | PASS (ảnh + chơi tay) |
+| Tạm dừng (UI) | Esc/P → Tiếp tục / Chơi lại Đêm / Cài đặt / Về menu; logic dừng hẳn | ảnh `pause-menu` | PASS |
+| Cài đặt | Âm lượng, độ nhạy chuột lưu vào `localStorage` | đọc code `main.ts` (`ddl-settings`) | PASS (chưa có test tự động) |
+| Âm thanh | Nhạc nền + hiệu ứng nhặt, thắp, tỏa sáng, bị đánh, nhảy, lướt, thắng, thua, Bóng Mực xuất hiện, đếm ngược 10 s | đọc code `sfx.ts` + `handleEvents` | PASS. Tiếng nhảy: bản web tự nhận ra lúc Mây rời đất với vy ≤ 7 (sim không có event nhảy) |
+| HUD | Lửa trên trái; đồng hồ mm:ss trên giữa, đỏ và nhấp nháy khi ≤ 30 s; đèn k/n và điểm trên phải; thanh 10 ô dưới giữa; hồi chiêu Lướt/Tỏa Sáng dưới phải; nhắc "E — Nạp ánh sáng (x/10)"; mũi tên tới đèn chưa sáng ngoài màn hình | ảnh `night1-hud`, `night3-tiers` | PASS |
+| Bảng màu, ánh sáng môi trường | Màu chuẩn trong `world.ts` (`PAL`) và CSS; `ambient = 0.15 + 0.55 × lit/total` | đọc code; ảnh | PASS |
+| ≥ 30 FPS ở 1280×720 | Đo thật trên Chrome, Đêm 3 | [fps.md](../proof/phase-2/fps.md): 59.9 FPS trung bình (Intel Iris Xe) | PASS |
+
+## 4. Đánh giá Phase 2
+
+- **Đạt:** 68 test (unit + CLI + scenario) xanh. 35/35 scenario headless (16 của Phase 1 đã cập nhật, 19 mới) đạt và tất định. FPS 59.9.
+- **Hồi quy Phase 1:** mọi spec Phase 1 vẫn chạy. Spec bị luật mới làm sai đều được sửa, lý do ghi ở trường `changed` và bảng mục 1. Unit test cũ được viết lại cho v1.1 vì gần như mọi số đều đổi.
+- **Chưa đạt / rủi ro:** (1) Cài đặt và âm thanh chỉ kiểm chứng bằng đọc code và chơi tay, chưa có test tự động. (2) Các giả định B1 (quy ước góc), B2 (xuất phát Đêm 3), B7 (`spawning` 60 tick), B16 (`dir_deg = null` khi không có gió), B18 (vị trí `night_start`) có thể khác test ẩn, nên hỏi trợ giảng Phase 2. (3) Ảnh trong `docs/proof/phase-1/screenshots/` là giao diện của tag `phase-1`, không phải giao diện hiện tại.
+- **Harness:** AGENTS.md được cập nhật (bản đồ, quy ước góc, spec sinh từ `gen-specs.mjs`, cảnh báo về lệnh chờ stdin). Skill `verify-phase` thêm bước kiểm tra tác dụng phụ của bản đồ và đo FPS. Thêm `scripts/bench-fps.mjs`.

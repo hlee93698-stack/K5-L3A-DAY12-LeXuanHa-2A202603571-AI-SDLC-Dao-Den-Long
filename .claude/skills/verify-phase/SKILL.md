@@ -5,13 +5,14 @@ description: Verify a lab phase end-to-end and refresh evidence before tagging p
 
 # Verify a phase
 
-1. Read the ticket requirements in `docs/notes/phase-N.md` (acceptance criteria table). Every row needs a check.
-2. For each new/changed rule, make sure there is a spec in `tests/scenarios/phase-N/` (headless, through the real CLI)
-   or a unit test in `tests/`. Expected values must be derived from `src/sim/tuning.ts` + the written rule, not from output.
-3. Run `npm test`. All green, including scenario specs of earlier phases (regression).
-   If an old spec is invalid because the ticket replaced a rule: edit/remove it AND log the reason in `docs/notes/phase-N.md`.
-4. Run `npm run verify`. It regenerates `docs/proof/phase-*/report.md`, `inputs/`, `runs/`. Never edit these by hand.
-5. Visual evidence (things only visible in the game): build, then
-   `node scripts/screenshot.mjs` → `docs/proof/phase-N/screenshots/` and describe what each image proves in the notes.
-6. Update the acceptance table in `docs/notes/phase-N.md` (PASS / NOT MET + reason) and `docs/notes/ai-log.md` (token estimate, AI mistakes).
-7. Commit (`git add -A && git commit`), then the human tags: `git tag phase-N && git push origin main phase-N`.
+1. Read the acceptance table in `docs/notes/phase-N.md`. Every row needs a check.
+2. For each new/changed rule there must be a headless spec in `tests/scenarios/gen-specs.mjs` (phase-N block)
+   or a unit test in `tests/`. Derive expected values from `src/sim/tuning.ts`, `src/sim/maps.ts` and the written rule.
+   Before running, re-check map side effects (charms, pads, island edges) near the scenario's path.
+3. `node tests/scenarios/gen-specs.mjs` then `npm test`. All green, including earlier phases (regression).
+   If an old spec is invalid because the ticket replaced a rule: edit it, add a `changed` reason, add a row to the notes table.
+4. `npm run verify` regenerates `docs/proof/phase-*/report.md`, `inputs/`, `runs/`. Never edit these by hand.
+5. Visual evidence: `node scripts/screenshot.mjs` → `docs/proof/phase-N/screenshots/`. Look at every image.
+6. Measured requirements (FPS, headless time): `npm run bench`; headless timing is asserted in `tests/cli.test.ts`.
+7. Update the result column in `docs/notes/phase-N.md` (PASS / NOT MET + reason) and `docs/notes/ai-log.md`.
+8. Commit. The human decides when to push and tag (`git tag phase-N && git push origin main phase-N`).

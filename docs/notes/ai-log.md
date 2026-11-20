@@ -29,3 +29,28 @@ Công cụ: **Claude Code** (VS Code extension), model Claude Opus. Harness: [AG
 - Đọc lab board một lần, tóm thành bảng giả định thay vì hỏi lại nhiều lần.
 - Không spawn subagent. Giá trị mong đợi tính tay nên không phải chạy thử nhiều vòng.
 - Hook và CI tự chạy test, nên không phải nhắc agent kiểm tra lại.
+
+## Phase 2
+
+**Lời nhắc chính:** "Làm tiếp phase 2", kèm dán toàn văn Ticket-02. Agent không đọc được tab Phase 2 (nội dung tải động sau khi đăng nhập; truy cập trực tiếp cơ sở dữ liệu của trang bị chặn) nên đã dừng lại xin người dán ticket, thay vì đoán yêu cầu.
+
+**Cách làm với agent:**
+1. Viết `docs/notes/phase-2.md` (bảng luật bị thay, 22 giả định, tiêu chí nghiệm thu) và commit **trước** khi code.
+2. Ưu tiên phần chấm tự động: số chuẩn, 3 bản đồ chuẩn, 12 bước/tick, contract v1.1. Web làm sau.
+3. Spec headless chuyển sang sinh từ một file (`tests/scenarios/gen-specs.mjs`). Spec Phase 1 được sửa theo số chuẩn kèm trường `changed`.
+4. Đo thật: thời gian headless (test CLI), FPS bằng Chrome điều khiển qua puppeteer-core.
+
+**AI sai ở đâu, phát hiện thế nào:**
+
+| Lỗi | Phát hiện | Xử lý |
+|---|---|---|
+| Chạy `python - \|\| node -e ...`: `python -` chờ stdin nên lệnh treo 2 phút | Lệnh bị timeout | Dừng task, sửa bằng Edit. Thêm quy tắc vào AGENTS.md |
+| Spec P2-10 (đi trên cầu) bị lệch 0.2 m: Bùa Gió C1 nằm giữa cầu nên Mây chạy nhanh hơn | `npm run verify` FAIL | Bỏ bùa khỏi scenario đó. Thêm vào AGENTS.md và skill: "kiểm tra tác dụng phụ của bản đồ trước khi viết spec" |
+| Spec P2-10 ban đầu cho Mây đi ngang ở x = 44, nơi đã là đảo B nên không rơi | Tự rà trước khi chạy | Đổi điểm rẽ sang x = 35 |
+| Spec P1-04 đặt đom đóm ở 1.1 m: 1.1 − 0.1 có thể > 1.0 do sai số dấu phẩy động | Tự rà trước khi chạy | Đổi thành 1.05 |
+| Unit test "re-pulse" viết lẫn lộn, không kiểm tra đúng điều tên test nói, và đếm thiếu 1 tick | Tự đọc lại | Viết lại: shade đang choáng 30 tick, trúng lại thì về 120 |
+| Tiếng nhảy có hàm nhưng không được gọi (sim không có event nhảy) | Rà bảng nghiệm thu | Bản web tự nhận ra lúc nhảy, không đổi headless |
+
+**Token / chi phí (ước tính):** khoảng 250–300k token cho Phase 2 (ticket dài, viết lại sim và web). _(Cập nhật số thật từ `/cost`.)_
+
+**Cách tiết kiệm:** viết giả định một lần rồi code theo; giá trị mong đợi tính tay nên ít vòng sửa; dồn kiểm tra vào `npm run verify` (một lệnh cho 35 scenario); không dùng subagent.
